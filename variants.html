@@ -629,6 +629,39 @@
     font-family: var(--font-en); font-weight: 700;
     font-size: 26px; color: var(--gray-900); letter-spacing: -0.7px;
   }
+
+  /* ============================================================
+     최종 시안 풀 프리뷰 (E안 + 1개 토글)
+     ============================================================ */
+  .full-preview {
+    max-width: 720px;
+    margin: 0 auto 60px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 18px;
+  }
+  .fp-toggle {
+    display: flex; gap: 2px;
+    background: #fff; border-radius: 999px; padding: 4px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  }
+  .fpt-btn {
+    padding: 8px 20px; border: none; background: transparent;
+    border-radius: 999px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    color: var(--gray-700); cursor: pointer;
+    letter-spacing: -0.3px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .fpt-btn.active {
+    background: var(--gray-900); color: #fff;
+  }
+  .fp-iframe {
+    width: 375px; height: 1051px;
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.10);
+    background: #fff;
+  }
 </style>
 </head>
 <body>
@@ -1095,6 +1128,40 @@
     </div>
 
   </div>
+
+  <!-- ════════════════ 최종 시안 풀 프리뷰 ════════════════ -->
+  <div class="section-divider">
+    <span class="label">최종 시안 풀 프리뷰</span>
+    <h2>E안 — 실제 화면 풀 페이지</h2>
+    <p>
+      E안(위계 라벨 + 인라인 보조)을 실제 신용점수 화면에 그대로 적용한 풀 페이지.<br/>
+      트리거로 Npay 스코어 / 신용성장계좌를 텍스트(페이 새싹 / +12점 성장중) ↔ 점수(895점 / 847점) 전환.
+    </p>
+  </div>
+
+  <div class="full-preview">
+    <div class="fp-toggle">
+      <button class="fpt-btn active" type="button" data-mode="label-text">텍스트</button>
+      <button class="fpt-btn" type="button" data-mode="score-text">점수</button>
+    </div>
+    <iframe class="fp-iframe" src="index.html#label-text" title="신용점수 메인 E안 프리뷰"></iframe>
+  </div>
+
+  <script>
+    (function () {
+      const btns = document.querySelectorAll('.fpt-btn');
+      const iframe = document.querySelector('.fp-iframe');
+      btns.forEach(b => b.addEventListener('click', () => {
+        const m = b.dataset.mode;
+        btns.forEach(x => x.classList.toggle('active', x === b));
+        try {
+          iframe.contentWindow.location.hash = m;
+        } catch (e) {
+          iframe.src = 'index.html#' + m;
+        }
+      }));
+    })();
+  </script>
 
 </body>
 </html>

@@ -347,6 +347,9 @@
   body.mode-label .v-score { display: none; }
   body.mode-score .v-label { display: none; }
 
+  /* ── Hide internal floating toggle when embedded in iframe ── */
+  body.embedded .version-toggle { display: none; }
+
   /* ── Ring gauge mode (I안: Npay 히어로) ── */
   .ring-gauge {
     display: none;
@@ -507,7 +510,7 @@
       <div class="rhs">
         <span class="rhs-badge npay">
           <span class="v-label">페이 새싹</span>
-          <span class="v-score"><span class="num">850</span>점</span>
+          <span class="v-score"><span class="num">895</span>점</span>
         </span>
       </div>
     </a>
@@ -520,7 +523,7 @@
       <div class="rhs">
         <span class="rhs-badge grow">
           <span class="v-label"><span class="num">+12</span>점 성장중</span>
-          <span class="v-score"><span class="num">720</span>점</span>
+          <span class="v-score"><span class="num">847</span>점</span>
         </span>
       </div>
     </a>
@@ -666,17 +669,20 @@
       const btns = document.querySelectorAll('.vt-btn');
       const MODES = ['label', 'score', 'ring'];
       const STYLES = ['text', 'badge'];
+      const isEmbedded = window.parent !== window;
+      if (isEmbedded) document.body.classList.add('embedded');
       function setState(mode, style) {
         if (!MODES.includes(mode)) mode = 'label';
+        const embedCls = isEmbedded ? ' embedded' : '';
         if (mode === 'ring') {
-          document.body.className = 'mode-ring';
+          document.body.className = 'mode-ring' + embedCls;
           btns.forEach(b => b.classList.toggle('active', b.dataset.mode === 'ring'));
           const want = '#ring';
           if (location.hash !== want) history.replaceState(null, '', want);
           return;
         }
         if (!STYLES.includes(style)) style = 'text';
-        document.body.className = 'mode-' + mode + ' style-' + style;
+        document.body.className = 'mode-' + mode + ' style-' + style + embedCls;
         btns.forEach(b => b.classList.toggle(
           'active',
           b.dataset.mode === mode && b.dataset.style === style
@@ -685,13 +691,17 @@
         if (location.hash !== want) history.replaceState(null, '', want);
       }
       btns.forEach(b => b.addEventListener('click', () => setState(b.dataset.mode, b.dataset.style)));
-      const hash = location.hash.slice(1) || 'label-text';
-      if (hash === 'ring') {
-        setState('ring');
-      } else {
-        const [m, s] = hash.split('-');
-        setState(m, s);
+      function applyFromHash() {
+        const hash = location.hash.slice(1) || 'label-text';
+        if (hash === 'ring') {
+          setState('ring');
+        } else {
+          const [m, s] = hash.split('-');
+          setState(m, s);
+        }
       }
+      window.addEventListener('hashchange', applyFromHash);
+      applyFromHash();
     })();
   </script>
 </body>
