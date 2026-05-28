@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=375, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>신용점수 (E안 적용)</title>
+<style>
+  :root {
+    --gray-150: #F3F5F7;
+    --gray-600: #929294;
+    --gray-700: #6F6F76;
+    --gray-800: #404048;
+    --gray-900: #1E1E23;
+    --black-222: #222;
+    --green: #09AA5C;
+    --red: #F73631;
+    --red-bright: #FF5252;
+    --npay: #03C75A;
+    --font-kr: "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-en: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  html, body { background: #d9d9d9; }
+  body { font-family: var(--font-kr); color: var(--gray-900); display: flex; justify-content: center; min-height: 100vh; }
+
+  .device {
+    width: 375px;
+    height: 1051px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0,0,0,0.08);
+  }
+
+  .abs { position: absolute; }
+  img { display: block; }
+
+  /* ── Status bar (44h) ── */
+  .status-bar { left: 0; top: 0; width: 375px; height: 44px; }
+  .sb-time {
+    left: 21px; top: 13px; width: 54px; height: 21px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-en); font-size: 14px; font-weight: 600;
+    color: #000; letter-spacing: -0.28px;
+  }
+  .sb-cellular { right: 64.39px; top: 17.6px; width: 17.27px; height: 11.13px; }
+  .sb-wifi { right: 44.02px; top: 17.33px; width: 15.27px; height: 10.97px; }
+  .sb-battery { right: 14.67px; top: 17.33px; width: 24.33px; height: 11.33px; }
+
+  /* ── Top nav (63h) ── */
+  .top-nav { left: 0; top: 44px; width: 375px; height: 63px; background: #fff; }
+  .top-back { left: 15.5px; top: 23.5px; width: 9px; height: 16.7px; }
+  .top-home {
+    left: 33px; top: 22px;
+    font-size: 15px; font-weight: 500; color: var(--black-222);
+    letter-spacing: -0.5px; line-height: 18px;
+  }
+  .top-title {
+    left: 50%; top: 19px; transform: translateX(-50%);
+    font-size: 18px; font-weight: 700; color: var(--black-222);
+    letter-spacing: -0.45px; line-height: 24px; white-space: nowrap;
+  }
+  .top-compare {
+    right: 15px; top: 22px;
+    font-size: 16px; font-weight: 500; color: var(--green);
+    letter-spacing: -0.3px; line-height: 22px;
+  }
+
+  /* ── Score badges (NICE/KCB) ── */
+  .nice-badge { left: 82px; top: 130px; width: 38px; height: 18px; }
+  .kcb-badge { left: 256px; top: 130px; width: 38px; height: 18px; }
+  .badge-label {
+    width: 38px; text-align: center;
+    font-family: var(--font-en); font-weight: 700; font-size: 12px;
+    color: #fff; letter-spacing: -0.3px; line-height: 18px;
+  }
+  .nice-badge .badge-label, .kcb-badge .badge-label { position: absolute; left: 0; top: 0; }
+
+  .score-divider { left: 187px; top: 140px; width: 1px; height: 62px; background: var(--gray-150); }
+
+  .score-num {
+    width: 161px; height: 34px;
+    font-family: var(--font-en); font-weight: 700; font-size: 28px;
+    color: var(--gray-900); text-align: center; letter-spacing: -0.8px; line-height: 34px;
+  }
+  .score-num.nice { left: 20px; top: 157px; }
+  .score-num.kcb { left: 195px; top: 157px; }
+
+  .score-rank {
+    width: 161px; height: 20px;
+    font-size: 14px; color: var(--gray-600); text-align: center;
+    letter-spacing: -0.3px; line-height: 20px;
+  }
+  .score-rank .pct { font-family: var(--font-en); font-weight: 500; }
+  .score-rank.nice { left: 20px; top: 193px; }
+  .score-rank.kcb { left: 195px; top: 193px; }
+
+  /* ── E variant tier rows (Npay / 성장) ── */
+  .tier-row {
+    left: 20px; width: 335px; height: 56px;
+    border-top: 1px solid var(--gray-150);
+    padding: 14px 30px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    text-decoration: none; color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.04);
+  }
+  .tier-row:active { background: var(--gray-150); }
+  .tier-row.npay { top: 220px; }
+  .tier-row.grow { top: 276px; }
+
+  .tier-row .lhs { display: flex; align-items: center; justify-content: flex-start; }
+  .tier-row .lhs .name {
+    font-size: 15px; font-weight: 600; color: var(--gray-800);
+    letter-spacing: -0.3px;
+  }
+  .tier-row .lhs .name .en { font-family: var(--font-en); }
+
+  .tier-row .rhs { display: flex; align-items: center; justify-content: flex-end; }
+  .tier-row .rhs .rhs-badge {
+    height: 26px; padding: 0 12px; border-radius: 13px;
+    display: inline-flex; align-items: center;
+    font-size: 13px; font-weight: 700;
+    color: #fff; letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+  .tier-row .rhs .rhs-badge.npay { background: var(--npay); }
+  .tier-row .rhs .rhs-badge.grow { background: var(--gray-900); }
+  .tier-row .rhs .rhs-badge .num {
+    font-family: var(--font-en); margin-right: 2px;
+  }
+
+  /* ── Raise score button (shifted +100) ── */
+  .raise-btn-bg {
+    left: 20px; top: 337px;
+    width: 335px; height: 52px;
+    background: var(--gray-150); border-radius: 8px;
+    overflow: hidden;
+  }
+  .raise-btn-gauge { left: 119px; top: 356px; width: 26px; height: 15px; }
+  .raise-btn-label {
+    left: 150px; top: 352px; width: 106px; height: 23px;
+    text-align: center;
+    font-family: var(--font-kr); font-weight: 700; font-size: 17px;
+    color: var(--gray-900); letter-spacing: -0.3px; line-height: 23px;
+  }
+
+  /* ── Credit management link (shifted +100) ── */
+  .credit-mgmt-text {
+    left: 101px; top: 405px; width: 163px;
+    font-size: 14px; color: var(--gray-800);
+    text-align: center; letter-spacing: -0.3px; line-height: 20px;
+    font-weight: 500;
+  }
+  .credit-mgmt-arrow { left: 268px; top: 409px; width: 6px; height: 10px; }
+
+  /* ── Dividers (shifted +100) ── */
+  .divider-1 { left: 0; top: 446px; width: 375px; height: 9px; background: var(--gray-150); }
+  .divider-2 { left: 0; top: 627px; width: 375px; height: 9px; background: var(--gray-150); }
+
+  /* ── Loan section (shifted +100) ── */
+  .loan-bg { left: 0; top: 455px; width: 375px; height: 172px; }
+  .loan-heading {
+    left: 18px; top: 479px; width: 255px; height: 24px;
+    font-size: 18px; font-weight: 700; color: var(--gray-900);
+    letter-spacing: -0.5px; line-height: 21px;
+    display: flex; align-items: center;
+  }
+
+  .loan-row1, .loan-row2 {
+    left: 20px; width: 335px; height: 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .loan-row1 { top: 527px; }
+  .loan-row2 { top: 575px; }
+
+  .loan-row-left { display: flex; align-items: center; gap: 8px; }
+  .loan-row-right { display: flex; align-items: center; gap: 4px; }
+
+  .loan-row-icon { width: 28px; height: 28px; overflow: hidden; flex-shrink: 0; }
+  .loan-row-icon img, .loan-row-icon svg { width: 100%; height: 100%; }
+  .loan-cash-icon { padding: 2.5px 4px; }
+
+  .loan-row-label {
+    font-size: 15px; color: var(--gray-800);
+    letter-spacing: -0.3px; line-height: 21px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .rate-group {
+    display: flex; align-items: center; gap: 4px;
+    width: 64px; flex-shrink: 0;
+  }
+  .rate-val {
+    font-family: var(--font-en); font-weight: 700; font-size: 16px;
+    color: var(--gray-900); letter-spacing: -0.3px;
+    flex: 1; text-align: center;
+  }
+  .rate-group .up {
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 6px solid var(--red);
+    flex-shrink: 0;
+  }
+  .loan-row-sep {
+    width: 1px; height: 11px; background: #d9d9d9; opacity: 0.45;
+    flex-shrink: 0; margin: 0 6px;
+  }
+  .loan-row-amount {
+    width: 75px; flex-shrink: 0; text-align: right;
+    font-family: var(--font-en); font-weight: 700; font-size: 16px;
+    color: var(--gray-900); letter-spacing: -0.3px; line-height: 22px;
+  }
+  .loan-row-amount .suffix {
+    font-family: var(--font-kr); font-weight: 700;
+  }
+  .loan-row-chev { width: 6px; height: 10px; flex-shrink: 0; margin-left: 4px; }
+
+  .loan-row-info {
+    font-size: 14px; color: var(--gray-600); text-align: right;
+    letter-spacing: -0.3px; line-height: 20px;
+  }
+  .loan-row-info .pct {
+    font-family: var(--font-en); color: var(--red);
+  }
+
+  /* ── Compare section (shifted +100) ── */
+  .compare-heading {
+    left: 20px; top: 660px; height: 21px;
+    font-size: 18px; font-weight: 700; color: var(--black-222);
+    letter-spacing: -0.5px; line-height: 21px; white-space: nowrap;
+  }
+  .compare-heading .en { font-family: var(--font-en); font-weight: 700; }
+
+  /* Card 1 */
+  .card-1 { left: 20px; top: 697px; width: 335px; height: 60px; }
+  .card-1-bg { position: absolute; left: -16px; top: -12px; width: 367px; height: 92px; }
+  .card-1-bg img { width: 100%; height: 100%; }
+  .card-1-text {
+    position: absolute; left: 16px; top: 18px; width: 274px;
+    font-weight: 700; color: var(--black-222);
+    font-size: 15px; letter-spacing: -0.5px; line-height: 23px;
+  }
+  .card-1-text .accent { color: var(--green); font-size: 17px; }
+  .card-1-text .num { font-family: var(--font-en); font-weight: 700; }
+  .card-1-chev { position: absolute; right: 2px; top: 25px; width: 6px; height: 10px; }
+
+  /* Card 2 */
+  .card-2 { left: 20px; top: 767px; width: 335px; height: 133px; }
+  .card-2-bg { position: absolute; left: -16px; top: -12px; width: 367px; height: 165px; }
+  .card-2-bg img { width: 100%; height: 100%; }
+  .card-2-text {
+    position: absolute; left: 14px; top: 18px; width: 274px;
+    font-weight: 700; color: var(--black-222);
+    font-size: 15px; letter-spacing: -0.5px; line-height: 23px;
+  }
+  .card-2-text .accent { color: var(--red-bright); font-size: 17px; }
+  .card-2-text .num { font-family: var(--font-en); font-weight: 700; }
+  .card-2-chev { position: absolute; right: 2px; top: 25px; width: 6px; height: 10px; }
+
+  .card-2-promo { position: absolute; left: 14px; top: 62px; width: 307px; height: 55px; }
+  .card-2-promo-bg { position: absolute; inset: 0; }
+  .card-2-promo-bg img { width: 100%; height: 100%; }
+  .card-2-promo-shinhan { position: absolute; left: 15px; top: 11px; width: 22px; height: 33px; }
+  .card-2-promo-text {
+    position: absolute; left: 48px; top: 19px; height: 18px;
+    font-weight: 700; font-size: 15px; color: var(--gray-900);
+    letter-spacing: -0.6px; line-height: 18px;
+    white-space: nowrap;
+  }
+  .card-2-promo-text .green { color: var(--green); }
+  .card-2-promo-text .num { font-family: var(--font-en); font-weight: 700; }
+  .card-2-promo-chev { position: absolute; right: 12px; top: 22px; width: 6px; height: 10px; }
+
+  /* Card 3 */
+  .card-3 { left: 20px; top: 910px; width: 335px; height: 64px; }
+  .card-3-bg { position: absolute; left: -16px; top: -12px; width: 367px; height: 96px; }
+  .card-3-bg img { width: 100%; height: 100%; }
+  .card-3-text {
+    position: absolute; left: 14px; top: 19px; width: 274px;
+    font-weight: 700; color: var(--black-222);
+    font-size: 15px; letter-spacing: -0.5px; line-height: 23px;
+  }
+  .card-3-text .accent { color: var(--red-bright); font-size: 17px; }
+  .card-3-text .num { font-family: var(--font-en); font-weight: 700; }
+  .card-3-chev { position: absolute; right: 2px; top: 25px; width: 6px; height: 10px; }
+
+  /* ── Bottom nav ── */
+  .bottom-nav { left: 0; bottom: 0; width: 375px; height: 77px; pointer-events: none; }
+  .bottom-nav img { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+  <main class="device">
+
+    <!-- Status bar -->
+    <div class="abs status-bar">
+      <div class="abs sb-time">9:41</div>
+      <img class="abs sb-cellular" src="figma_credit_score_assets/44d3ef06f4e8c1adbda0ba004b517a585a79b4a1.svg" alt="" />
+      <img class="abs sb-wifi" src="figma_credit_score_assets/e288422a992283919f5c907f1536a441ef8d187f.svg" alt="" />
+      <img class="abs sb-battery" src="figma_credit_score_assets/da0245239ef02f20c17986c1f31598eeb064f9fa.svg" alt="" />
+    </div>
+
+    <!-- Top nav -->
+    <div class="abs top-nav">
+      <img class="abs top-back" src="figma_credit_score_assets/9d72311ea6285742467abeda5ed99767ba088d41.svg" alt="" />
+      <div class="abs top-home">금융 홈</div>
+      <div class="abs top-title">신용점수</div>
+      <div class="abs top-compare">대출비교</div>
+    </div>
+
+    <!-- NICE / KCB badges -->
+    <div class="abs nice-badge">
+      <img src="figma_credit_score_assets/f326b6d1704f4797dd293ce2f53655acc8e1eb62.svg" alt="" style="width:38px;height:18px;" />
+      <div class="badge-label">NICE</div>
+    </div>
+    <div class="abs kcb-badge">
+      <img src="figma_credit_score_assets/e88631a6ccf6c055c8e13da0e6b8ef4ba5fb2125.svg" alt="" style="width:38px;height:18px;" />
+      <div class="badge-label">KCB</div>
+    </div>
+
+    <div class="abs score-divider"></div>
+
+    <div class="abs score-num nice">1000</div>
+    <div class="abs score-num kcb">988</div>
+
+    <div class="abs score-rank nice">상위 <span class="pct">2%</span></div>
+    <div class="abs score-rank kcb">상위 <span class="pct">2%</span></div>
+
+    <!-- E variant: Npay row -->
+    <a class="abs tier-row npay" href="https://swg2210.github.io/socre/">
+      <div class="lhs">
+        <span class="name"><span class="en">Npay</span> 스코어</span>
+      </div>
+      <div class="rhs">
+        <span class="rhs-badge npay">페이 새싹</span>
+      </div>
+    </a>
+
+    <!-- E variant: 성장계좌 row -->
+    <a class="abs tier-row grow" href="https://swg2210.github.io/socre/">
+      <div class="lhs">
+        <span class="name">신용성장계좌</span>
+      </div>
+      <div class="rhs">
+        <span class="rhs-badge grow"><span class="num">+12</span>점 성장중</span>
+      </div>
+    </a>
+
+    <!-- 신용점수 올리기 -->
+    <div class="abs raise-btn-bg"></div>
+    <img class="abs raise-btn-gauge" src="figma_credit_score_assets/e951bcf5921fe60abeb4aecf12fd9e18810c6c20.svg" alt="" />
+    <div class="abs raise-btn-label">신용점수 올리기</div>
+
+    <!-- 신용관리 링크 -->
+    <div class="abs credit-mgmt-text">나는 신용관리 잘 하고 있을까?</div>
+    <img class="abs credit-mgmt-arrow" src="figma_credit_score_assets/4db25a323c8f5c540ba12682dfb0613de3e5d7bb.svg" alt="" />
+
+    <div class="abs divider-1"></div>
+
+    <!-- Loan section -->
+    <img class="abs loan-bg" src="figma_credit_score_assets/9a9d8e4147d71dee13a93c0f144813e9ed881f33.svg" alt="" />
+    <div class="abs loan-heading">오늘 점수로 받을 수 있는 대출</div>
+
+    <div class="abs loan-row1">
+      <div class="loan-row-left">
+        <div class="loan-row-icon loan-cash-icon">
+          <img src="figma_credit_score_assets/ecce779bc6cf7a3a131d2335758203b02a4b8285.svg" alt="" />
+        </div>
+        <div class="loan-row-label">내 예상 조건</div>
+      </div>
+      <div class="loan-row-right">
+        <div class="rate-group">
+          <span class="rate-val">4.48%</span>
+          <span class="up"></span>
+        </div>
+        <div class="loan-row-sep"></div>
+        <div class="loan-row-amount">8,000<span class="suffix">만원</span></div>
+        <img class="loan-row-chev" src="figma_credit_score_assets/4db25a323c8f5c540ba12682dfb0613de3e5d7bb.svg" alt="" />
+      </div>
+    </div>
+
+    <div class="abs loan-row2">
+      <div class="loan-row-left">
+        <div class="loan-row-icon">
+          <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="3" width="18" height="22" rx="3" fill="#8465FF"/>
+            <rect x="9" y="9.5" width="10" height="1.6" rx="0.8" fill="#fff"/>
+            <rect x="9" y="13" width="10" height="1.6" rx="0.8" fill="#fff"/>
+            <rect x="9" y="16.5" width="6" height="1.6" rx="0.8" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="loan-row-label">대출 리포트</div>
+      </div>
+      <div class="loan-row-right">
+        <div class="loan-row-info">금리가 <span class="pct">0.1%</span> 올랐어요</div>
+        <img class="loan-row-chev" src="figma_credit_score_assets/4db25a323c8f5c540ba12682dfb0613de3e5d7bb.svg" alt="" />
+      </div>
+    </div>
+
+    <div class="abs divider-2"></div>
+
+    <!-- Compare section heading -->
+    <div class="abs compare-heading">브라운님은 <span class="en">30</span>대 평균과 비교하여</div>
+
+    <!-- Card 1 -->
+    <div class="abs card-1">
+      <div class="card-1-bg">
+        <img src="figma_credit_score_assets/08b5620949de8e5b5734a005ce1dbd28f5700bf6.svg" alt="" />
+      </div>
+      <div class="card-1-text">
+        신용점수는 <span class="accent"><span class="num">34</span>점 높아요</span>
+      </div>
+      <img class="card-1-chev" src="figma_credit_score_assets/a8d3a22b171157506a30588322e8ef1d09a3b968.svg" alt="" />
+    </div>
+
+    <!-- Card 2 with promo -->
+    <div class="abs card-2">
+      <div class="card-2-bg">
+        <img src="figma_credit_score_assets/dbcefc25ebf2c914a4a4dbed71ffeb4c6b86e68d.svg" alt="" />
+      </div>
+      <div class="card-2-text">
+        카드값은 약 <span class="accent"><span class="num">50</span>만원 많아요</span>
+      </div>
+      <img class="card-2-chev" src="figma_credit_score_assets/a8d3a22b171157506a30588322e8ef1d09a3b968.svg" alt="" />
+
+      <div class="card-2-promo">
+        <div class="card-2-promo-bg">
+          <img src="figma_credit_score_assets/15ece5c27f28fffd0b65bb1f44559e2e386f0321.svg" alt="" />
+        </div>
+        <img class="card-2-promo-shinhan" src="figma_credit_score_assets/9741e09b1dc91bb8cf2839bcfa85ef863952bd5b.svg" alt="" />
+        <div class="card-2-promo-text">
+          <span class="green">최대 <span class="num">20</span>만원</span> 받고 카드값 절약까지?
+        </div>
+        <img class="card-2-promo-chev" src="figma_credit_score_assets/4db25a323c8f5c540ba12682dfb0613de3e5d7bb.svg" alt="" />
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="abs card-3">
+      <div class="card-3-bg">
+        <img src="figma_credit_score_assets/c83e81949d22630442401472c86f9fe3845bf740.svg" alt="" />
+      </div>
+      <div class="card-3-text">
+        대출액은 약 <span class="accent"><span class="num">2</span>억원 많아요</span>
+      </div>
+      <img class="card-3-chev" src="figma_credit_score_assets/a8d3a22b171157506a30588322e8ef1d09a3b968.svg" alt="" />
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="abs bottom-nav">
+      <img src="figma_credit_score_assets/22222d334ffcdc3206576bb9647f9d67ee83cc5b.png" alt="" />
+    </div>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 26 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 1428752200">
+<g id="Group 1428752199">
+<g id="Group 1428752198">
+<path id="Ellipse 5565 (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M9.04151 9.42684C7.98361 10.6613 7.27999 12.4171 7.27999 14.4297H0C0 10.6226 1.33282 7.10187 3.57844 4.48153L9.04151 9.42684Z" fill="var(--fill-0, #FF3D00)"/>
+<path id="Ellipse 5568 (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M13 7.48204C11.5203 7.48204 10.0994 8.17481 9.0122 9.46131L3.51583 4.55512C5.83319 1.8129 9.18972 0 13 0V7.48204Z" fill="var(--fill-0, #FFDA00)"/>
+<path id="Ellipse 5569 (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M16.9878 9.46131C15.9006 8.17481 14.4797 7.48204 13 7.48204V0C16.8103 0 20.1668 1.8129 22.4842 4.55512L16.9878 9.46131Z" fill="var(--fill-0, #31B6FF)"/>
+<path id="Ellipse 5571 (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M18.72 14.4297C18.72 12.436 18.0295 10.694 16.9878 9.46132L22.4842 4.55513C24.6918 7.16751 26 10.6579 26 14.4297H18.72Z" fill="var(--fill-0, #00DE5A)"/>
+</g>
+<path id="Ellipse 5576 (Stroke)" d="M13 0.250015C16.7275 0.250022 20.0168 2.02337 22.293 4.71681C24.4127 7.22521 25.6907 10.5616 25.7471 14.1797H18.9648C18.9097 12.2324 18.2154 10.5265 17.1787 9.29982C16.05 7.96416 14.5619 7.23244 13 7.23244C11.4381 7.23244 9.95005 7.96417 8.82129 9.29982C7.78463 10.5265 7.09027 12.2324 7.03516 14.1797H0.25293C0.30933 10.5616 1.58729 7.22521 3.70703 4.71681C5.98317 2.02336 9.27252 0.250015 13 0.250015Z" stroke="var(--stroke-0, black)" stroke-opacity="0.1" stroke-width="0.5"/>
+</g>
+<path id="Rectangle 3469660" d="M22.4742 4.56904L14.5302 13.8029C13.9824 14.4396 13.0177 14.4431 12.4695 13.8105C11.9249 13.1821 12.0337 12.2052 12.703 11.7158L22.4742 4.56904Z" fill="var(--fill-0, black)"/>
+</g>
+</svg>
