@@ -360,6 +360,26 @@
   body.mode-ring .score-rank,
   body.mode-ring .tier-row { display: none; }
 
+  /* Ring mode: ring-gauge가 230px+이라 raise 버튼 이하 모두 30px 내림 */
+  body.mode-ring .device { height: 1081px; }
+  body.mode-ring .raise-btn-bg,
+  body.mode-ring .raise-btn-gauge,
+  body.mode-ring .raise-btn-label,
+  body.mode-ring .credit-mgmt-text,
+  body.mode-ring .credit-mgmt-arrow,
+  body.mode-ring .divider-1,
+  body.mode-ring .loan-bg,
+  body.mode-ring .loan-heading,
+  body.mode-ring .loan-row1,
+  body.mode-ring .loan-row2,
+  body.mode-ring .divider-2,
+  body.mode-ring .compare-heading,
+  body.mode-ring .card-1,
+  body.mode-ring .card-2,
+  body.mode-ring .card-3 {
+    transform: translateY(30px);
+  }
+
   .ring-gauge .ring-eyebrow {
     text-align: center;
     font-size: 12px; color: var(--gray-700); font-weight: 600;
