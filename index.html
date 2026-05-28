@@ -360,8 +360,8 @@
   body.mode-ring .score-rank,
   body.mode-ring .tier-row { display: none; }
 
-  /* Ring mode: ring-gauge가 230px+이라 raise 버튼 이하 모두 30px 내림 */
-  body.mode-ring .device { height: 1081px; }
+  /* Ring mode: ring-gauge가 raise 버튼 영역 침범하지 않도록 아래 모두 15px 내림 */
+  body.mode-ring .device { height: 1066px; }
   body.mode-ring .raise-btn-bg,
   body.mode-ring .raise-btn-gauge,
   body.mode-ring .raise-btn-label,
@@ -377,19 +377,9 @@
   body.mode-ring .card-1,
   body.mode-ring .card-2,
   body.mode-ring .card-3 {
-    transform: translateY(30px);
+    transform: translateY(15px);
   }
 
-  .ring-gauge .ring-eyebrow {
-    text-align: center;
-    font-size: 12px; color: var(--gray-700); font-weight: 600;
-    letter-spacing: -0.2px;
-    margin-bottom: 6px;
-  }
-  .ring-gauge .ring-eyebrow .brand {
-    font-family: var(--font-en); font-weight: 700;
-    color: var(--npay);
-  }
   .ring-gauge .ring-wrap {
     position: relative;
     display: flex; justify-content: center;
@@ -402,6 +392,15 @@
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     text-align: center;
   }
+  .ring-gauge .ring-label {
+    font-size: 12px; color: var(--gray-700); font-weight: 600;
+    letter-spacing: -0.2px;
+    margin-bottom: 4px;
+  }
+  .ring-gauge .ring-label .brand {
+    font-family: var(--font-en); font-weight: 700;
+    color: var(--npay);
+  }
   .ring-gauge .ring-num {
     font-family: var(--font-en); font-weight: 700;
     font-size: 42px; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1;
@@ -410,10 +409,6 @@
     font-family: var(--font-kr); font-weight: 600;
     font-size: 15px; color: var(--gray-500);
     margin-left: 2px; letter-spacing: -0.3px;
-  }
-  .ring-gauge .ring-persona {
-    margin-top: 6px;
-    font-size: 12px; color: var(--gray-700); font-weight: 600;
   }
   .ring-gauge .ring-stats {
     position: relative;
@@ -532,7 +527,6 @@
 
     <!-- Ring gauge view (mode-ring only) -->
     <div class="abs ring-gauge">
-      <div class="ring-eyebrow">내 <span class="brand">Npay</span> 스코어</div>
       <div class="ring-wrap">
         <svg viewBox="0 0 200 200" width="160" height="160">
           <defs>
@@ -549,8 +543,8 @@
             transform="rotate(-90 100 100)"/>
         </svg>
         <div class="ring-center">
+          <div class="ring-label"><span class="brand">Npay</span> 스코어</div>
           <div class="ring-num">895<span class="unit">점</span></div>
-          <div class="ring-persona">신뢰 페이러</div>
         </div>
       </div>
       <div class="ring-stats">
