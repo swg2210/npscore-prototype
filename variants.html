@@ -499,37 +499,67 @@
   .vh-sub .num { font-family: var(--font-en); font-weight: 700; color: var(--gray-900); }
   .vh-sub .lab { color: var(--gray-500); margin-right: 4px; }
 
-  /* ───────────────────────── Variant I: 링 게이지 ───────────────────────── */
-  .vi { padding: 24px 20px 22px; }
-  .vi-ring-wrap { position: relative; display: flex; justify-content: center; }
-  .vi-ring { display: block; }
+  /* ───────────────────────── Variant I: 링 게이지 (Npay 히어로) ───────────────────────── */
+  .vi {
+    padding: 26px 22px 22px;
+    background: linear-gradient(180deg, rgba(3,199,90,0.06) 0%, rgba(255,255,255,1) 58%);
+  }
+  .vi-eyebrow {
+    text-align: center;
+    font-size: 12px; color: var(--gray-700); font-weight: 600;
+    letter-spacing: -0.2px;
+    margin-bottom: 12px;
+  }
+  .vi-eyebrow .brand {
+    font-family: var(--font-en); font-weight: 700;
+    color: var(--npay);
+  }
+  .vi-ring-wrap {
+    position: relative;
+    display: flex; justify-content: center;
+  }
+  .vi-ring {
+    display: block;
+    filter: drop-shadow(0 8px 18px rgba(3,199,90,0.22));
+  }
   .vi-center {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     text-align: center;
   }
   .vi-center .vi-num {
     font-family: var(--font-en); font-weight: 700;
-    font-size: 44px; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1;
+    font-size: 58px; color: var(--gray-900); letter-spacing: -2px; line-height: 1;
   }
-  .vi-center .vi-label {
-    font-family: var(--font-en); font-size: 11px; font-weight: 700;
-    color: var(--gray-500); margin-top: 4px; letter-spacing: 0.5px;
+  .vi-center .vi-persona {
+    margin-top: 8px;
+    font-size: 13px; color: var(--gray-700); font-weight: 600;
+    letter-spacing: -0.3px;
   }
   .vi-stats {
+    position: relative;
     display: grid; grid-template-columns: repeat(3, 1fr);
-    margin-top: 18px; padding-top: 16px;
+    margin-top: 22px; padding-top: 18px;
     border-top: 1px solid var(--gray-150);
-    gap: 6px;
   }
-  .vi-stat { text-align: center; }
+  .vi-stats::before,
+  .vi-stats::after {
+    content: ""; position: absolute;
+    top: 24px; bottom: 4px;
+    width: 1px; background: var(--gray-150);
+  }
+  .vi-stats::before { left: 33.333%; }
+  .vi-stats::after  { left: 66.666%; }
+  .vi-stat { text-align: center; padding: 0 4px; }
   .vi-stat .k {
     font-size: 11px; color: var(--gray-600); font-weight: 600;
-    letter-spacing: -0.2px;
+    letter-spacing: 0.2px;
   }
   .vi-stat .v {
-    font-family: var(--font-en); font-weight: 700; font-size: 18px;
-    color: var(--gray-900); margin-top: 2px; letter-spacing: -0.4px;
+    margin-top: 4px;
+    font-family: var(--font-en); font-weight: 700; font-size: 20px;
+    color: var(--gray-900); letter-spacing: -0.4px;
   }
+  .vi-stat .v.grow { color: var(--green); }
 
   /* ───────────────────────── Variant J: 에디토리얼 모노 ───────────────────────── */
   .vj { padding: 30px 24px 24px; }
@@ -953,38 +983,42 @@
       </div>
     </div>
 
-    <!-- ────────── Variant I: 링 게이지 ────────── -->
+    <!-- ────────── Variant I: 링 게이지 (Npay 히어로) ────────── -->
     <div class="card-wrap">
       <div class="card-label">
         <span class="name">I. 링 게이지</span>
-        <span class="desc">애플 헬스 스타일 · 시각적 임팩트 + 보조 지표</span>
+        <span class="desc">Npay 스코어 히어로 · 애플 헬스 스타일 + 그라데이션 링</span>
       </div>
       <div class="device">
         <div class="mini-header"><span class="title">신용점수</span></div>
         <div class="vi">
+          <div class="vi-eyebrow">내 <span class="brand">Npay</span> 스코어</div>
           <div class="vi-ring-wrap">
-            <svg class="vi-ring" viewBox="0 0 200 200" width="200" height="200">
+            <svg class="vi-ring" viewBox="0 0 220 220" width="220" height="220">
               <defs>
                 <linearGradient id="vi-grad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#0A7DF3"/>
-                  <stop offset="100%" stop-color="#09AA5C"/>
+                  <stop offset="0%" stop-color="#03C75A"/>
+                  <stop offset="100%" stop-color="#7BE8B4"/>
                 </linearGradient>
               </defs>
-              <circle cx="100" cy="100" r="86" fill="none" stroke="var(--gray-150)" stroke-width="12"/>
-              <circle cx="100" cy="100" r="86" fill="none" stroke="url(#vi-grad)" stroke-width="12"
-                stroke-linecap="round"
-                stroke-dasharray="540 540" stroke-dashoffset="0"
-                transform="rotate(-90 100 100)"/>
+              <!-- background ring -->
+              <circle cx="110" cy="110" r="92" fill="none"
+                stroke="rgba(3,199,90,0.10)" stroke-width="16"/>
+              <!-- progress ring: 850/1000 = 85% of circumference (578) -->
+              <circle cx="110" cy="110" r="92" fill="none"
+                stroke="url(#vi-grad)" stroke-width="16" stroke-linecap="round"
+                stroke-dasharray="578" stroke-dashoffset="87"
+                transform="rotate(-90 110 110)"/>
             </svg>
             <div class="vi-center">
-              <div class="vi-num">1000</div>
-              <div class="vi-label">NICE · 상위 2%</div>
+              <div class="vi-num">850</div>
+              <div class="vi-persona">신뢰 페이러</div>
             </div>
           </div>
           <div class="vi-stats">
+            <div class="vi-stat"><div class="k">NICE</div><div class="v">1000</div></div>
             <div class="vi-stat"><div class="k">KCB</div><div class="v">988</div></div>
-            <div class="vi-stat"><div class="k">Npay</div><div class="v">850</div></div>
-            <div class="vi-stat"><div class="k">성장</div><div class="v">+12</div></div>
+            <div class="vi-stat"><div class="k">성장</div><div class="v grow">+12</div></div>
           </div>
         </div>
       </div>
