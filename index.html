@@ -128,6 +128,16 @@
     font-family: var(--font-en); margin-right: 2px;
   }
 
+  /* Badge style — only active when body.style-badge */
+  body.style-badge .tier-row .rhs .rhs-badge {
+    height: 26px; padding: 0 12px; border-radius: 13px;
+    display: inline-flex; align-items: center;
+    font-size: 13px; font-weight: 700;
+    color: #fff; letter-spacing: -0.3px;
+  }
+  body.style-badge .tier-row .rhs .rhs-badge.npay { background: var(--npay); }
+  body.style-badge .tier-row .rhs .rhs-badge.grow { background: var(--gray-900); }
+
   /* ── Raise score button (shifted +100) ── */
   .raise-btn-bg {
     left: 20px; top: 337px;
@@ -294,9 +304,11 @@
     position: fixed;
     top: 16px; right: 16px;
     background: #fff;
-    border-radius: 999px;
+    border-radius: 14px;
     padding: 4px;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.14);
     z-index: 100;
     font-family: var(--font-kr);
@@ -306,10 +318,12 @@
     border: none; background: transparent;
     font-size: 13px; font-weight: 600;
     color: var(--gray-700);
-    border-radius: 999px;
+    border-radius: 10px;
     cursor: pointer;
     letter-spacing: -0.3px;
     transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+    text-align: center;
   }
   .vt-btn.active {
     background: var(--gray-900); color: #fff;
@@ -320,12 +334,14 @@
   body.mode-score .v-label { display: none; }
 </style>
 </head>
-<body class="mode-label">
+<body class="mode-label style-text">
 
   <!-- Prototype version toggle (not part of design) -->
   <div class="version-toggle">
-    <button class="vt-btn" type="button" data-mode="label">문구형</button>
-    <button class="vt-btn" type="button" data-mode="score">점수형</button>
+    <button class="vt-btn" type="button" data-mode="label" data-style="text">문구형</button>
+    <button class="vt-btn" type="button" data-mode="label" data-style="badge">문구형(뱃지)</button>
+    <button class="vt-btn" type="button" data-mode="score" data-style="text">점수형</button>
+    <button class="vt-btn" type="button" data-mode="score" data-style="badge">점수형(뱃지)</button>
   </div>
 
   <main class="device">
@@ -500,16 +516,22 @@
   <script>
     (function () {
       const btns = document.querySelectorAll('.vt-btn');
-      const VALID = ['label', 'score'];
-      function setMode(mode) {
-        if (!VALID.includes(mode)) mode = 'label';
-        document.body.className = 'mode-' + mode;
-        btns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-        const want = '#' + mode;
+      const MODES = ['label', 'score'];
+      const STYLES = ['text', 'badge'];
+      function setState(mode, style) {
+        if (!MODES.includes(mode)) mode = 'label';
+        if (!STYLES.includes(style)) style = 'text';
+        document.body.className = 'mode-' + mode + ' style-' + style;
+        btns.forEach(b => b.classList.toggle(
+          'active',
+          b.dataset.mode === mode && b.dataset.style === style
+        ));
+        const want = '#' + mode + '-' + style;
         if (location.hash !== want) history.replaceState(null, '', want);
       }
-      btns.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
-      setMode(location.hash.slice(1));
+      btns.forEach(b => b.addEventListener('click', () => setState(b.dataset.mode, b.dataset.style)));
+      const [m, s] = (location.hash.slice(1) || 'label-text').split('-');
+      setState(m, s);
     })();
   </script>
 </body>
