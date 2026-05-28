@@ -530,6 +530,11 @@
     font-family: var(--font-en); font-weight: 700;
     font-size: 58px; color: var(--gray-900); letter-spacing: -2px; line-height: 1;
   }
+  .vi-center .vi-num .unit {
+    font-family: var(--font-kr); font-weight: 600;
+    font-size: 20px; color: var(--gray-500);
+    margin-left: 3px; letter-spacing: -0.5px;
+  }
   .vi-center .vi-persona {
     margin-top: 8px;
     font-size: 13px; color: var(--gray-700); font-weight: 600;
@@ -552,14 +557,19 @@
   .vi-stat { text-align: center; padding: 0 4px; }
   .vi-stat .k {
     font-size: 11px; color: var(--gray-600); font-weight: 600;
-    letter-spacing: 0.2px;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
   }
   .vi-stat .v {
     margin-top: 4px;
     font-family: var(--font-en); font-weight: 700; font-size: 20px;
     color: var(--gray-900); letter-spacing: -0.4px;
   }
-  .vi-stat .v.grow { color: var(--green); }
+  .vi-stat .v .unit {
+    font-family: var(--font-kr); font-weight: 600;
+    font-size: 13px; color: var(--gray-500);
+    margin-left: 1px; letter-spacing: -0.3px;
+  }
 
   /* ───────────────────────── Variant J: 에디토리얼 모노 ───────────────────────── */
   .vj { padding: 30px 24px 24px; }
@@ -1004,21 +1014,21 @@
               <!-- background ring -->
               <circle cx="110" cy="110" r="92" fill="none"
                 stroke="rgba(3,199,90,0.10)" stroke-width="16"/>
-              <!-- progress ring: 850/1000 = 85% of circumference (578) -->
+              <!-- progress ring: 895/1000 = 89.5% of circumference (578) → offset ≈ 61 -->
               <circle cx="110" cy="110" r="92" fill="none"
                 stroke="url(#vi-grad)" stroke-width="16" stroke-linecap="round"
-                stroke-dasharray="578" stroke-dashoffset="87"
+                stroke-dasharray="578" stroke-dashoffset="61"
                 transform="rotate(-90 110 110)"/>
             </svg>
             <div class="vi-center">
-              <div class="vi-num">850</div>
+              <div class="vi-num">895<span class="unit">점</span></div>
               <div class="vi-persona">신뢰 페이러</div>
             </div>
           </div>
           <div class="vi-stats">
-            <div class="vi-stat"><div class="k">NICE</div><div class="v">1000</div></div>
-            <div class="vi-stat"><div class="k">KCB</div><div class="v">988</div></div>
-            <div class="vi-stat"><div class="k">성장</div><div class="v grow">+12</div></div>
+            <div class="vi-stat"><div class="k">NICE</div><div class="v">1000<span class="unit">점</span></div></div>
+            <div class="vi-stat"><div class="k">KCB</div><div class="v">988<span class="unit">점</span></div></div>
+            <div class="vi-stat"><div class="k">신용성장계좌</div><div class="v">847<span class="unit">점</span></div></div>
           </div>
         </div>
       </div>
