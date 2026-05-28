@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>신용점수 - 점수 영역 4가지 안</title>
+<style>
+  :root {
+    --gray-100: #F6F8FA;
+    --gray-150: #F3F5F7;
+    --gray-300: #E5E8EB;
+    --gray-500: #B2B5BC;
+    --gray-600: #929294;
+    --gray-700: #6F6F76;
+    --gray-800: #404048;
+    --gray-900: #1E1E23;
+    --black-222: #222;
+
+    --nice: #0A7DF3;
+    --kcb:  #FA8836;
+    --npay: #03C75A;
+    --grow: #8465FF;
+
+    --green: #09AA5C;
+    --red: #F73631;
+
+    --font-kr: "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-en: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  html, body { background: #ECEEF1; font-family: var(--font-kr); color: var(--gray-900); }
+  body {
+    padding: 40px 24px 80px;
+    min-height: 100vh;
+  }
+
+  .page-title { text-align: center; font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--gray-900); }
+  .page-sub { text-align: center; color: var(--gray-600); margin-bottom: 36px; font-size: 14px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 375px);
+    gap: 28px;
+    justify-content: center;
+  }
+
+  .card-wrap {
+    display: flex; flex-direction: column; align-items: stretch;
+  }
+  .card-label {
+    font-size: 14px; font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+  .card-label .name { font-weight: 700; color: var(--gray-900); }
+  .card-label .desc { font-weight: 400; color: var(--gray-600); margin-left: 6px; }
+
+  .device {
+    width: 375px;
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  /* shared header (mini) */
+  .mini-header {
+    height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid var(--gray-150);
+    position: relative;
+  }
+  .mini-header .title { font-size: 17px; font-weight: 700; color: var(--black-222); letter-spacing: -0.45px; }
+
+  /* ───────────────────────── Variant A: 4 columns ───────────────────────── */
+  .va { padding: 22px 14px 24px; }
+  .va-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0; align-items: stretch; }
+  .va-col { text-align: center; padding: 0 4px; position: relative; }
+  .va-col + .va-col::before {
+    content: ""; position: absolute; left: 0; top: 10%; bottom: 10%; width: 1px; background: var(--gray-150);
+  }
+  .badge {
+    display: inline-block; padding: 0 8px; height: 18px; line-height: 18px;
+    border-radius: 9px;
+    font-family: var(--font-en); font-size: 11px; font-weight: 700;
+    color: #fff; letter-spacing: -0.2px;
+    white-space: nowrap;
+  }
+  .badge.nice { background: var(--nice); }
+  .badge.kcb { background: var(--kcb); }
+  .badge.npay { background: var(--npay); }
+  .badge.grow { background: var(--grow); }
+  .va-col .num {
+    margin-top: 8px;
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 22px; color: var(--gray-900); letter-spacing: -0.6px;
+    line-height: 28px;
+  }
+  .va-col .rank {
+    margin-top: 2px;
+    font-size: 12px; color: var(--gray-600); letter-spacing: -0.3px;
+  }
+  .va-col .rank .pct { font-family: var(--font-en); font-weight: 500; }
+
+  /* ───────────────────────── Variant B: 2×2 grid ───────────────────────── */
+  .vb { padding: 18px 16px 24px; }
+  .vb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .vb-cell {
+    background: var(--gray-100);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+    position: relative;
+  }
+  .vb-cell .top { display: flex; align-items: center; justify-content: space-between; }
+  .vb-cell .num {
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 26px; color: var(--gray-900); letter-spacing: -0.7px;
+    line-height: 30px;
+  }
+  .vb-cell .rank {
+    font-size: 12px; color: var(--gray-600); letter-spacing: -0.3px;
+  }
+  .vb-cell .rank .pct { font-family: var(--font-en); font-weight: 500; }
+  .vb-cell .delta {
+    font-family: var(--font-en); font-size: 11px; font-weight: 600;
+    color: var(--green);
+  }
+  .vb-cell .delta.down { color: var(--red); }
+
+  /* ───────────────────────── Variant C: focused + chips ───────────────────────── */
+  .vc { padding: 22px 20px 22px; }
+  .vc-chips {
+    display: flex; gap: 6px; margin-bottom: 16px;
+    overflow-x: auto;
+  }
+  .vc-chip {
+    height: 32px; padding: 0 12px;
+    border-radius: 16px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--gray-100); color: var(--gray-700);
+    font-size: 13px; font-weight: 600; letter-spacing: -0.2px;
+    cursor: pointer; flex-shrink: 0;
+    border: 1px solid transparent;
+  }
+  .vc-chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .vc-chip.nice.active { background: rgba(10,125,243,0.08); color: var(--nice); border-color: rgba(10,125,243,0.2); }
+  .vc-chip.nice .dot { background: var(--nice); }
+  .vc-chip.kcb .dot { background: var(--kcb); }
+  .vc-chip.npay .dot { background: var(--npay); }
+  .vc-chip.grow .dot { background: var(--grow); }
+
+  .vc-focus {
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .vc-focus .num {
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 56px; color: var(--gray-900); letter-spacing: -1.6px;
+    line-height: 60px;
+  }
+  .vc-focus .max {
+    font-family: var(--font-en); font-size: 18px;
+    color: var(--gray-500); font-weight: 600;
+  }
+  .vc-meta {
+    display: flex; align-items: center; gap: 10px; margin-top: 6px;
+  }
+  .vc-meta .pill {
+    height: 22px; padding: 0 8px;
+    border-radius: 11px;
+    background: rgba(9,170,92,0.1); color: var(--green);
+    font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; letter-spacing: -0.2px;
+  }
+  .vc-meta .rank {
+    color: var(--gray-600); font-size: 13px;
+  }
+  .vc-meta .rank .pct { font-family: var(--font-en); font-weight: 500; }
+
+  .vc-bar {
+    margin-top: 18px;
+    height: 6px; border-radius: 3px; background: var(--gray-150);
+    position: relative; overflow: hidden;
+  }
+  .vc-bar > .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--nice); border-radius: 3px; }
+
+  /* ============================================================
+     사용자 멘탈모델 기반 시안 (E, F, G)
+     - Tier1: 내 신용 (NICE + KCB)
+     - Tier2: 추가 신호 (네이버페이 스코어)
+     - Tier3: 신용 성장 (성장계좌 진행/액션)
+     ============================================================ */
+
+  .section-divider {
+    margin: 56px auto 28px;
+    max-width: 720px;
+    text-align: center;
+  }
+  .section-divider .label {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #1E1E23;
+    color: #fff;
+    border-radius: 16px;
+    font-size: 12px; font-weight: 700; letter-spacing: -0.2px;
+    margin-bottom: 10px;
+  }
+  .section-divider h2 {
+    font-size: 19px; font-weight: 700; color: var(--gray-900);
+    margin-bottom: 6px;
+  }
+  .section-divider p { color: var(--gray-600); font-size: 13px; line-height: 19px; }
+
+  /* shared bits for hierarchy variants */
+  .tier-label {
+    font-size: 13px; font-weight: 700; color: var(--gray-800);
+    letter-spacing: -0.3px; line-height: 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .tier-label .meta { font-size: 12px; font-weight: 500; color: var(--gray-600); }
+  .tier-divider { height: 1px; background: var(--gray-150); margin: 16px -4px; }
+  .row-chev {
+    width: 6px; height: 10px;
+    border-top: 1.5px solid var(--gray-500);
+    border-right: 1.5px solid var(--gray-500);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ───────────────────────── Variant E: 위계 라벨 + 인라인 보조 + CTA 띠 ───────────────────────── */
+  .ve { padding: 18px 18px 8px; }
+  .ve-tier1 { margin-bottom: 16px; }
+  .ve-scores {
+    display: grid; grid-template-columns: 1fr 1px 1fr;
+    align-items: center;
+  }
+  .ve-scores .col { text-align: center; }
+  .ve-scores .col .num {
+    margin-top: 6px;
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 28px; color: var(--gray-900); letter-spacing: -0.8px;
+    line-height: 34px;
+  }
+  .ve-scores .col .rank { margin-top: 2px; font-size: 13px; color: var(--gray-600); }
+  .ve-scores .col .rank .pct { font-family: var(--font-en); font-weight: 500; }
+  .ve-scores .vline { height: 56px; background: var(--gray-150); justify-self: center; }
+
+  .ve-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+    border-top: 1px solid var(--gray-150);
+  }
+  .ve-row .lhs { display: flex; align-items: center; gap: 10px; }
+  .ve-row .lhs .badge { width: 48px; padding: 0; text-align: center; }
+  .ve-row .lhs .name { font-size: 14px; font-weight: 600; color: var(--gray-800); letter-spacing: -0.3px; }
+  .ve-row .rhs { display: flex; align-items: center; gap: 8px; }
+  .ve-row .rhs .val {
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 17px; color: var(--gray-900); letter-spacing: -0.4px;
+  }
+  .ve-row .rhs .sub { font-size: 12px; color: var(--gray-600); }
+
+  /* persona / grow-meta: 같은 크기, 진한 회색으로 통일 */
+  .ve-row .rhs .persona,
+  .ve-row .rhs .grow-meta {
+    font-size: 15px; font-weight: 700;
+    color: var(--gray-800); letter-spacing: -0.3px;
+  }
+  .ve-row .rhs .grow-meta { font-family: var(--font-en); }
+  .ve-row .rhs .grow-meta .kor { font-family: var(--font-kr); }
+
+  /* 성장계좌 배지: E안에서는 검정 */
+  .ve .badge.grow { background: var(--gray-900); }
+
+  /* ───────────────────────── Variant F: 메인 + 보조 + 진행 트랙 ───────────────────────── */
+  .vf { padding: 18px 18px 18px; }
+  .vf .tier1-scores {
+    display: grid; grid-template-columns: 1fr 1px 1fr; align-items: center;
+  }
+  .vf .tier1-scores .col { text-align: center; }
+  .vf .tier1-scores .col .num {
+    margin-top: 6px;
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 28px; color: var(--gray-900); letter-spacing: -0.8px;
+    line-height: 34px;
+  }
+  .vf .tier1-scores .col .rank { margin-top: 2px; font-size: 13px; color: var(--gray-600); }
+  .vf .tier1-scores .col .rank .pct { font-family: var(--font-en); font-weight: 500; }
+  .vf .tier1-scores .vline { height: 56px; background: var(--gray-150); justify-self: center; }
+
+  .vf-tier2 {
+    background: var(--gray-100);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 4px;
+  }
+  .vf-tier2 .top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .vf-tier2 .left { display: flex; align-items: center; gap: 8px; }
+  .vf-tier2 .left .name { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+  .vf-tier2 .val {
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 18px; color: var(--gray-900); letter-spacing: -0.4px;
+  }
+  .vf-tier2 .bar {
+    height: 4px; background: var(--gray-300); border-radius: 2px; overflow: hidden;
+  }
+  .vf-tier2 .bar .fill { height: 100%; background: var(--npay); border-radius: 2px; }
+
+  .vf-tier3 {
+    margin-top: 12px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(132,101,255,0.08), rgba(132,101,255,0.02));
+    border: 1px solid rgba(132,101,255,0.18);
+    border-radius: 10px;
+  }
+  .vf-tier3 .top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .vf-tier3 .left { display: flex; align-items: center; gap: 8px; }
+  .vf-tier3 .left .name { font-size: 13px; font-weight: 700; color: var(--grow); }
+  .vf-tier3 .delta {
+    font-family: var(--font-en); font-weight: 700; font-size: 15px;
+    color: var(--grow);
+  }
+  .vf-tier3 .delta .kor { font-family: var(--font-kr); font-size: 13px; }
+  .vf-tier3 .progress {
+    height: 6px; background: rgba(132,101,255,0.15); border-radius: 3px; overflow: hidden;
+  }
+  .vf-tier3 .progress .fill { height: 100%; background: var(--grow); border-radius: 3px; }
+  .vf-tier3 .caption {
+    margin-top: 6px;
+    font-size: 12px; color: var(--gray-700);
+    display: flex; justify-content: space-between;
+  }
+
+  /* ───────────────────────── Variant G: 통합 단일 점수 ───────────────────────── */
+  .vg { padding: 22px 22px 18px; }
+  .vg-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .vg-header .label { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+  .vg-header .toggle {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    background: var(--gray-100);
+    border-radius: 14px;
+    font-size: 12px; font-weight: 600; color: var(--gray-700);
+  }
+  .vg-header .toggle .caret {
+    width: 6px; height: 6px;
+    border-bottom: 1.5px solid var(--gray-600);
+    border-right: 1.5px solid var(--gray-600);
+    transform: rotate(45deg);
+    margin-top: -2px;
+  }
+
+  .vg-big {
+    display: flex; align-items: baseline; gap: 8px; justify-content: center;
+    margin-top: 4px;
+  }
+  .vg-big .num {
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 64px; color: var(--gray-900); letter-spacing: -2px;
+    line-height: 68px;
+  }
+  .vg-big .max {
+    font-family: var(--font-en); font-size: 18px; font-weight: 600;
+    color: var(--gray-500);
+  }
+
+  .vg-meta {
+    display: flex; align-items: center; gap: 10px; justify-content: center;
+    margin-top: 6px;
+  }
+  .vg-meta .pill {
+    height: 22px; padding: 0 10px;
+    border-radius: 11px;
+    background: rgba(9,170,92,0.1); color: var(--green);
+    font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; letter-spacing: -0.2px;
+  }
+  .vg-meta .pill.delta { background: rgba(10,125,243,0.1); color: var(--nice); }
+  .vg-meta .pill .num { font-family: var(--font-en); }
+
+  .vg-sources {
+    margin-top: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    padding: 10px 0;
+    border-top: 1px solid var(--gray-150);
+    border-bottom: 1px solid var(--gray-150);
+  }
+  .vg-sources .src {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--gray-700);
+  }
+  .vg-sources .src .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .vg-sources .src .v {
+    font-family: var(--font-en); font-weight: 700; color: var(--gray-900); font-size: 13px;
+  }
+  .vg-sources .src.nice .dot { background: var(--nice); }
+  .vg-sources .src.kcb .dot { background: var(--kcb); }
+
+  .vg-extras { margin-top: 8px; }
+  .vg-extras .row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0;
+  }
+  .vg-extras .row + .row { border-top: 1px solid var(--gray-150); }
+  .vg-extras .row .lhs { display: flex; align-items: center; gap: 10px; }
+  .vg-extras .row .lhs .badge { width: 48px; padding: 0; text-align: center; }
+  .vg-extras .row .lhs .name {
+    font-size: 14px; font-weight: 600; color: var(--gray-800); letter-spacing: -0.3px;
+  }
+  .vg-extras .row .rhs { display: flex; align-items: center; gap: 8px; }
+  .vg-extras .row .rhs .val {
+    font-family: var(--font-en); font-weight: 700; font-size: 16px;
+    color: var(--gray-900); letter-spacing: -0.4px;
+  }
+  .vg-extras .row .rhs .grow {
+    font-family: var(--font-en); font-weight: 700; font-size: 14px;
+    color: var(--grow);
+  }
+  .vg-extras .row .rhs .grow .kor { font-family: var(--font-kr); }
+
+  /* ───────────────────────── Variant D: vertical list w/ bars ───────────────────────── */
+  .vd { padding: 18px 18px 22px; }
+  .vd-row {
+    display: grid;
+    grid-template-columns: 56px 1fr 70px;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .vd-row + .vd-row { border-top: 1px solid var(--gray-150); }
+  .vd-row .badge { width: 56px; text-align: center; padding: 0; }
+  .vd-bar-wrap {
+    height: 8px;
+    background: var(--gray-150);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .vd-bar {
+    height: 100%; border-radius: 4px;
+  }
+  .vd-bar.nice { background: var(--nice); }
+  .vd-bar.kcb { background: var(--kcb); }
+  .vd-bar.npay { background: var(--npay); }
+  .vd-bar.grow { background: var(--grow); }
+  .vd-num {
+    text-align: right;
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 17px; color: var(--gray-900); letter-spacing: -0.4px;
+  }
+  .vd-num .max {
+    font-family: var(--font-en); font-size: 12px;
+    color: var(--gray-500); font-weight: 500;
+  }
+
+  /* ============================================================
+     심플/이쁨 아이데이션 (H, I, J, K)
+     - 같은 4개 점수를 보여주되, 미감 우선
+     ============================================================ */
+
+  /* ───────────────────────── Variant H: 토스 미니멀 ───────────────────────── */
+  .vh { padding: 32px 24px 28px; }
+  .vh-eyebrow {
+    font-size: 12px; color: var(--gray-600); font-weight: 600;
+    margin-bottom: 8px; letter-spacing: -0.2px;
+  }
+  .vh-hero {
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 64px; line-height: 1; letter-spacing: -2px;
+    color: var(--gray-900);
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .vh-hero .max { font-size: 18px; color: var(--gray-500); font-weight: 600; }
+  .vh-meta {
+    display: flex; gap: 8px; margin-top: 14px; align-items: center;
+  }
+  .vh-meta .pill {
+    padding: 4px 10px; background: rgba(9,170,92,0.1);
+    color: var(--green); border-radius: 11px;
+    font-size: 12px; font-weight: 700;
+  }
+  .vh-meta .delta { font-size: 13px; color: var(--gray-600); font-weight: 500; }
+  .vh-meta .delta .num { font-family: var(--font-en); color: var(--nice); font-weight: 700; }
+  .vh-sub {
+    margin-top: 26px; padding-top: 18px;
+    border-top: 1px solid var(--gray-150);
+    font-size: 13px; color: var(--gray-700);
+    letter-spacing: -0.2px; line-height: 22px;
+  }
+  .vh-sub .num { font-family: var(--font-en); font-weight: 700; color: var(--gray-900); }
+  .vh-sub .lab { color: var(--gray-500); margin-right: 4px; }
+
+  /* ───────────────────────── Variant I: 링 게이지 ───────────────────────── */
+  .vi { padding: 24px 20px 22px; }
+  .vi-ring-wrap { position: relative; display: flex; justify-content: center; }
+  .vi-ring { display: block; }
+  .vi-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .vi-center .vi-num {
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 44px; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1;
+  }
+  .vi-center .vi-label {
+    font-family: var(--font-en); font-size: 11px; font-weight: 700;
+    color: var(--gray-500); margin-top: 4px; letter-spacing: 0.5px;
+  }
+  .vi-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid var(--gray-150);
+    gap: 6px;
+  }
+  .vi-stat { text-align: center; }
+  .vi-stat .k {
+    font-size: 11px; color: var(--gray-600); font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+  .vi-stat .v {
+    font-family: var(--font-en); font-weight: 700; font-size: 18px;
+    color: var(--gray-900); margin-top: 2px; letter-spacing: -0.4px;
+  }
+
+  /* ───────────────────────── Variant J: 에디토리얼 모노 ───────────────────────── */
+  .vj { padding: 30px 24px 24px; }
+  .vj-tag {
+    font-family: var(--font-en); font-size: 11px;
+    letter-spacing: 1.4px; text-transform: uppercase;
+    color: var(--gray-600); font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .vj-hero {
+    font-family: "Times New Roman", "Noto Serif KR", "Source Serif Pro", serif;
+    font-weight: 400;
+    font-size: 96px; line-height: 1; letter-spacing: -4px;
+    color: var(--gray-900);
+  }
+  .vj-divider {
+    height: 1px; background: var(--gray-900);
+    margin: 22px 0 4px;
+  }
+  .vj-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 12px 0; font-size: 13px;
+    color: var(--gray-800); font-weight: 500;
+    letter-spacing: -0.2px;
+  }
+  .vj-row + .vj-row { border-top: 1px solid var(--gray-150); }
+  .vj-row .num {
+    font-family: var(--font-en); font-weight: 600;
+    color: var(--gray-900); font-size: 15px; letter-spacing: -0.3px;
+  }
+
+  /* ───────────────────────── Variant K: 파스텔 카드 스택 ───────────────────────── */
+  .vk { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .vk-card {
+    padding: 14px 18px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .vk-nice { background: rgba(10,125,243,0.08); }
+  .vk-kcb  { background: rgba(250,136,54,0.08); }
+  .vk-npay { background: rgba(3,199,90,0.08); }
+  .vk-grow { background: rgba(132,101,255,0.08); }
+  .vk-lhs { display: flex; flex-direction: column; gap: 2px; }
+  .vk-tag {
+    font-family: var(--font-en); font-weight: 700; font-size: 12px;
+    letter-spacing: -0.2px;
+  }
+  .vk-nice .vk-tag { color: var(--nice); }
+  .vk-kcb  .vk-tag { color: var(--kcb); }
+  .vk-npay .vk-tag { color: var(--npay); }
+  .vk-grow .vk-tag { color: var(--grow); }
+  .vk-rank {
+    font-size: 12px; color: var(--gray-600); font-weight: 500;
+    letter-spacing: -0.2px;
+  }
+  .vk-num {
+    font-family: var(--font-en); font-weight: 700;
+    font-size: 26px; color: var(--gray-900); letter-spacing: -0.7px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-title">신용점수 메인 — 점수 영역 4가지 안</div>
+  <div class="page-sub">NICE · KCB · 네이버페이 스코어 · 신용성장계좌 — 4개 점수를 한 화면에 보여주는 시안</div>
+
+  <div class="grid">
+
+    <!-- ────────── Variant A ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">A. 4열 컴팩트</span>
+        <span class="desc">현재 패턴 확장, 한눈에 다 보임 · 숫자가 작아짐</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="va">
+          <div class="va-grid">
+            <div class="va-col">
+              <span class="badge nice">NICE</span>
+              <div class="num">1000</div>
+              <div class="rank">상위 <span class="pct">2%</span></div>
+            </div>
+            <div class="va-col">
+              <span class="badge kcb">KCB</span>
+              <div class="num">988</div>
+              <div class="rank">상위 <span class="pct">2%</span></div>
+            </div>
+            <div class="va-col">
+              <span class="badge npay">Npay</span>
+              <div class="num">850</div>
+              <div class="rank">상위 <span class="pct">8%</span></div>
+            </div>
+            <div class="va-col">
+              <span class="badge grow">성장</span>
+              <div class="num">720</div>
+              <div class="rank"><span class="pct">+12</span> 점</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────── Variant B ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">B. 2×2 그리드 카드</span>
+        <span class="desc">대등한 네 카드 · 숫자 가독성 좋음, 영역 차지 큼</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vb">
+          <div class="vb-grid">
+            <div class="vb-cell">
+              <div class="top">
+                <span class="badge nice">NICE</span>
+                <span class="delta">+8</span>
+              </div>
+              <div class="num">1000</div>
+              <div class="rank">상위 <span class="pct">2%</span></div>
+            </div>
+            <div class="vb-cell">
+              <div class="top">
+                <span class="badge kcb">KCB</span>
+                <span class="delta">+3</span>
+              </div>
+              <div class="num">988</div>
+              <div class="rank">상위 <span class="pct">2%</span></div>
+            </div>
+            <div class="vb-cell">
+              <div class="top">
+                <span class="badge npay">Npay</span>
+                <span class="delta">+15</span>
+              </div>
+              <div class="num">850</div>
+              <div class="rank">상위 <span class="pct">8%</span></div>
+            </div>
+            <div class="vb-cell">
+              <div class="top">
+                <span class="badge grow">성장</span>
+                <span class="delta">+12</span>
+              </div>
+              <div class="num">720</div>
+              <div class="rank">이번 달</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────── Variant C ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">C. 칩 + 큰 점수 (포커스 1개)</span>
+        <span class="desc">한 점수를 크게 강조, 칩으로 전환 · 메인 점수에 무게</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vc">
+          <div class="vc-chips">
+            <span class="vc-chip nice active"><span class="dot"></span>NICE</span>
+            <span class="vc-chip kcb"><span class="dot"></span>KCB 988</span>
+            <span class="vc-chip npay"><span class="dot"></span>네이버페이 850</span>
+            <span class="vc-chip grow"><span class="dot"></span>성장계좌 720</span>
+          </div>
+          <div class="vc-focus">
+            <span class="num">1000</span>
+            <span class="max">/ 1000</span>
+          </div>
+          <div class="vc-meta">
+            <span class="pill">상위 2%</span>
+            <span class="rank">지난주보다 <span class="pct">+8</span>점</span>
+          </div>
+          <div class="vc-bar"><div class="fill" style="width:100%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────── Variant D ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">D. 막대 비교 리스트</span>
+        <span class="desc">네 점수 한눈에 비교 · 정보량 많음, 숫자만큼 시각비교</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vd">
+          <div class="vd-row">
+            <span class="badge nice">NICE</span>
+            <div class="vd-bar-wrap"><div class="vd-bar nice" style="width:100%;"></div></div>
+            <div class="vd-num">1000<span class="max"> / 1000</span></div>
+          </div>
+          <div class="vd-row">
+            <span class="badge kcb">KCB</span>
+            <div class="vd-bar-wrap"><div class="vd-bar kcb" style="width:98.8%;"></div></div>
+            <div class="vd-num">988<span class="max"> / 1000</span></div>
+          </div>
+          <div class="vd-row">
+            <span class="badge npay">Npay</span>
+            <div class="vd-bar-wrap"><div class="vd-bar npay" style="width:85%;"></div></div>
+            <div class="vd-num">850<span class="max"> / 1000</span></div>
+          </div>
+          <div class="vd-row">
+            <span class="badge grow">성장</span>
+            <div class="vd-bar-wrap"><div class="vd-bar grow" style="width:72%;"></div></div>
+            <div class="vd-num">720<span class="max"> / 1000</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════ 사용자 멘탈모델 기반 시안 ════════════════ -->
+  <div class="section-divider">
+    <span class="label">사용자 관점 재설계</span>
+    <h2>4개 균등 ✗ → 3계층 ◯</h2>
+    <p>
+      메인: <b>내 신용점수</b> (NICE + KCB 묶음) · 서브: <b>네이버페이 스코어</b> · 액션: <b>신용성장계좌</b><br/>
+      "서비스 4개 있으니 4박스"가 아니라, 사용자가 머리속에서 분류하는 위계를 그대로 반영합니다.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- ────────── Variant E ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">E. 위계 라벨 + 인라인 보조</span>
+        <span class="desc">현재 디자인 최소 변경 · NICE/KCB 메인 유지 + 보조 한 줄씩</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="ve">
+          <div class="ve-tier1">
+            <div class="ve-scores">
+              <div class="col">
+                <span class="badge nice">NICE</span>
+                <div class="num">1000</div>
+                <div class="rank">상위 <span class="pct">2%</span></div>
+              </div>
+              <div class="vline"></div>
+              <div class="col">
+                <span class="badge kcb">KCB</span>
+                <div class="num">988</div>
+                <div class="rank">상위 <span class="pct">2%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ve-row">
+            <div class="lhs">
+              <span class="badge npay">Npay</span>
+              <span class="name">네이버페이 스코어</span>
+            </div>
+            <div class="rhs">
+              <span class="persona npay">신뢰 페이러</span>
+              <span class="row-chev"></span>
+            </div>
+          </div>
+
+          <div class="ve-row">
+            <div class="lhs">
+              <span class="badge grow">성장</span>
+              <span class="name">신용성장계좌</span>
+            </div>
+            <div class="rhs">
+              <span class="grow-meta">+12<span class="kor">점 성장중</span></span>
+              <span class="row-chev"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────── Variant F ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">F. 메인 + 보조 카드 + 성장 트랙</span>
+        <span class="desc">성장계좌를 "점수"가 아닌 진행 상태로 시각화</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vf">
+          <div class="tier-label" style="margin-bottom:6px;">
+            <span>내 신용점수</span>
+          </div>
+          <div class="tier1-scores">
+            <div class="col">
+              <span class="badge nice">NICE</span>
+              <div class="num">1000</div>
+              <div class="rank">상위 <span class="pct">2%</span></div>
+            </div>
+            <div class="vline"></div>
+            <div class="col">
+              <span class="badge kcb">KCB</span>
+              <div class="num">988</div>
+              <div class="rank">상위 <span class="pct">2%</span></div>
+            </div>
+          </div>
+
+          <div class="tier-divider"></div>
+
+          <div class="vf-tier2">
+            <div class="top">
+              <div class="left">
+                <span class="badge npay">Npay</span>
+                <span class="name">네이버페이 스코어</span>
+              </div>
+              <span class="val">850</span>
+            </div>
+            <div class="bar"><div class="fill" style="width:85%;"></div></div>
+          </div>
+
+          <div class="vf-tier3">
+            <div class="top">
+              <div class="left">
+                <span class="badge grow">성장</span>
+                <span class="name">신용성장계좌</span>
+              </div>
+              <span class="delta">+12<span class="kor">점</span></span>
+            </div>
+            <div class="progress"><div class="fill" style="width:60%;"></div></div>
+            <div class="caption">
+              <span>이번 달 신용 성장 중</span>
+              <span>목표까지 8점</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────── Variant G ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">G. 통합 단일 점수 (NICE/KCB 합침)</span>
+        <span class="desc">"내 점수가 얼마인가" 한 숫자에 집중 · NICE/KCB는 출처로 격하</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vg">
+          <div class="vg-header">
+            <span class="label">내 신용점수</span>
+            <span class="toggle">NICE 기준 <span class="caret"></span></span>
+          </div>
+          <div class="vg-big">
+            <span class="num">1000</span>
+            <span class="max">/ 1000</span>
+          </div>
+          <div class="vg-meta">
+            <span class="pill">상위 2%</span>
+            <span class="pill delta">지난주 <span class="num">+8</span>점</span>
+          </div>
+
+          <div class="vg-sources">
+            <span class="src nice"><span class="dot"></span>NICE <span class="v">1000</span></span>
+            <span class="src kcb"><span class="dot"></span>KCB <span class="v">988</span></span>
+          </div>
+
+          <div class="vg-extras">
+            <div class="row">
+              <div class="lhs">
+                <span class="badge npay">Npay</span>
+                <span class="name">네이버페이 스코어</span>
+              </div>
+              <div class="rhs">
+                <span class="val">850</span>
+                <span class="row-chev"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="lhs">
+                <span class="badge grow">성장</span>
+                <span class="name">신용성장계좌</span>
+              </div>
+              <div class="rhs">
+                <span class="grow">+12<span class="kor">점 성장중</span></span>
+                <span class="row-chev"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════ 심플 · 이쁨 아이데이션 ════════════════ -->
+  <div class="section-divider">
+    <span class="label">심플 · 이쁨 아이데이션</span>
+    <h2>같은 정보, 다른 분위기</h2>
+    <p>
+      NICE / KCB / 네이버페이 / 신용성장계좌 — 4개를 더 미감 우선으로 풀어본 시안<br/>
+      (위계 시안과 별개로, "예쁘게 보이는 것" 자체가 목표)
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- ────────── Variant H: 토스 미니멀 ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">H. 토스 미니멀</span>
+        <span class="desc">큰 숫자 + 한 줄 보조 · 가장 단순한 표현</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vh">
+          <div class="vh-eyebrow">내 신용점수 · NICE</div>
+          <div class="vh-hero">1,000<span class="max">/ 1000</span></div>
+          <div class="vh-meta">
+            <span class="pill">상위 2%</span>
+            <span class="delta">지난주 <span class="num">+8</span></span>
+          </div>
+          <div class="vh-sub">
+            <span class="lab">KCB</span><span class="num">988</span> &nbsp;·&nbsp;
+            <span class="lab">네이버페이</span><span class="num">850</span> &nbsp;·&nbsp;
+            <span class="lab">성장</span><span class="num">+12</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────── Variant I: 링 게이지 ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">I. 링 게이지</span>
+        <span class="desc">애플 헬스 스타일 · 시각적 임팩트 + 보조 지표</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vi">
+          <div class="vi-ring-wrap">
+            <svg class="vi-ring" viewBox="0 0 200 200" width="200" height="200">
+              <defs>
+                <linearGradient id="vi-grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#0A7DF3"/>
+                  <stop offset="100%" stop-color="#09AA5C"/>
+                </linearGradient>
+              </defs>
+              <circle cx="100" cy="100" r="86" fill="none" stroke="var(--gray-150)" stroke-width="12"/>
+              <circle cx="100" cy="100" r="86" fill="none" stroke="url(#vi-grad)" stroke-width="12"
+                stroke-linecap="round"
+                stroke-dasharray="540 540" stroke-dashoffset="0"
+                transform="rotate(-90 100 100)"/>
+            </svg>
+            <div class="vi-center">
+              <div class="vi-num">1000</div>
+              <div class="vi-label">NICE · 상위 2%</div>
+            </div>
+          </div>
+          <div class="vi-stats">
+            <div class="vi-stat"><div class="k">KCB</div><div class="v">988</div></div>
+            <div class="vi-stat"><div class="k">Npay</div><div class="v">850</div></div>
+            <div class="vi-stat"><div class="k">성장</div><div class="v">+12</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────── Variant J: 에디토리얼 모노 ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">J. 에디토리얼 모노</span>
+        <span class="desc">세리프 디스플레이 · 인쇄물처럼 정제된 분위기</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vj">
+          <div class="vj-tag">NICE · 상위 2%</div>
+          <div class="vj-hero">1000</div>
+          <div class="vj-divider"></div>
+          <div class="vj-row"><span>KCB</span><span class="num">988</span></div>
+          <div class="vj-row"><span>네이버페이 스코어</span><span class="num">850</span></div>
+          <div class="vj-row"><span>신용성장계좌</span><span class="num">+12</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────── Variant K: 파스텔 카드 스택 ────────── -->
+    <div class="card-wrap">
+      <div class="card-label">
+        <span class="name">K. 파스텔 카드 스택</span>
+        <span class="desc">소스별 카드 · 부드러운 색조로 균등하게 펼침</span>
+      </div>
+      <div class="device">
+        <div class="mini-header"><span class="title">신용점수</span></div>
+        <div class="vk">
+          <div class="vk-card vk-nice">
+            <div class="vk-lhs">
+              <span class="vk-tag">NICE</span>
+              <span class="vk-rank">상위 2%</span>
+            </div>
+            <div class="vk-num">1,000</div>
+          </div>
+          <div class="vk-card vk-kcb">
+            <div class="vk-lhs">
+              <span class="vk-tag">KCB</span>
+              <span class="vk-rank">상위 2%</span>
+            </div>
+            <div class="vk-num">988</div>
+          </div>
+          <div class="vk-card vk-npay">
+            <div class="vk-lhs">
+              <span class="vk-tag">Npay</span>
+              <span class="vk-rank">신뢰 페이러</span>
+            </div>
+            <div class="vk-num">850</div>
+          </div>
+          <div class="vk-card vk-grow">
+            <div class="vk-lhs">
+              <span class="vk-tag">성장</span>
+              <span class="vk-rank">이번 달</span>
+            </div>
+            <div class="vk-num">+12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
