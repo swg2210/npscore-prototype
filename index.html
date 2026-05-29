@@ -138,6 +138,50 @@
   body.style-badge .tier-row .rhs .rhs-badge.npay { background: var(--npay); }
   body.style-badge .tier-row .rhs .rhs-badge.grow { background: var(--gray-900); }
 
+  /* ── Hierarchy-label variant rows (H안: 위계 라벨 + 인라인 보조) ── */
+  .hier-row {
+    display: none;
+    left: 20px; width: 335px; height: 56px;
+    border-top: 1px solid var(--gray-150);
+    padding: 0 4px;
+    align-items: center; justify-content: space-between;
+    text-decoration: none; color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.04);
+  }
+  .hier-row:active { background: var(--gray-150); }
+  .hier-row.npay { top: 220px; }
+  .hier-row.grow { top: 276px; }
+  body.mode-hier .hier-row { display: flex; }
+  body.mode-hier .tier-row { display: none; }
+
+  .hier-row .lhs { display: flex; align-items: center; gap: 10px; }
+  .hier-row .hbadge {
+    display: inline-block; width: 48px; padding: 0;
+    height: 18px; line-height: 18px; border-radius: 9px; text-align: center;
+    font-family: var(--font-en); font-size: 11px; font-weight: 700;
+    color: #fff; letter-spacing: -0.2px; white-space: nowrap;
+  }
+  .hier-row .hbadge.npay { background: var(--npay); }
+  .hier-row .hbadge.grow { background: var(--gray-900); }
+  .hier-row .lhs .name {
+    font-size: 14px; font-weight: 600; color: var(--gray-800); letter-spacing: -0.3px;
+  }
+  .hier-row .rhs { display: flex; align-items: center; gap: 8px; }
+  .hier-row .rhs .persona,
+  .hier-row .rhs .grow-meta {
+    font-size: 15px; font-weight: 700; color: var(--gray-800); letter-spacing: -0.3px;
+  }
+  .hier-row .rhs .grow-meta { font-family: var(--font-en); }
+  .hier-row .rhs .grow-meta .kor { font-family: var(--font-kr); }
+  .hier-row .hchev {
+    width: 6px; height: 10px;
+    border-top: 1.5px solid var(--gray-600);
+    border-right: 1.5px solid var(--gray-600);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
   /* ── Raise score button (shifted +100) ── */
   .raise-btn-bg {
     left: 20px; top: 337px;
@@ -428,11 +472,23 @@
   }
   .ring-gauge .ring-stats::before { left: 33.333%; }
   .ring-gauge .ring-stats::after  { left: 66.666%; }
-  .ring-gauge .ring-stats > div {
+  .ring-gauge .ring-stats > div,
+  .ring-gauge .ring-stats > a {
     text-align: center;
     display: flex; flex-direction: column; gap: 2px;
     padding: 0 4px;
   }
+  /* Clickable areas (Npay 링 + 신용성장계좌) */
+  .ring-gauge a.ring-wrap,
+  .ring-gauge .ring-stats a.grow-link {
+    text-decoration: none; color: inherit; cursor: pointer;
+  }
+  .ring-gauge a.ring-wrap { -webkit-tap-highlight-color: rgba(3,199,90,0.10); }
+  .ring-gauge .ring-stats a.grow-link {
+    border-radius: 8px; transition: background 0.15s ease;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.04);
+  }
+  .ring-gauge .ring-stats a.grow-link:active { background: var(--gray-150); }
   .ring-gauge .ring-stats .k {
     font-size: 11px; color: var(--gray-600); font-weight: 600;
     letter-spacing: -0.2px;
@@ -463,6 +519,10 @@
     <div class="vt-section single">
       <div class="vt-title">I안 · Npay 히어로</div>
       <button class="vt-btn" type="button" data-mode="ring">링 게이지</button>
+    </div>
+    <div class="vt-section single">
+      <div class="vt-title">H안 · 위계 라벨</div>
+      <button class="vt-btn" type="button" data-mode="hier">인라인 보조</button>
     </div>
   </div>
 
@@ -528,9 +588,31 @@
       </div>
     </a>
 
+    <!-- H variant: 위계 라벨 + 인라인 보조 (mode-hier only) -->
+    <a class="abs hier-row npay" href="https://swg2210.github.io/socre/">
+      <div class="lhs">
+        <span class="hbadge npay">Npay</span>
+        <span class="name">네이버페이 스코어</span>
+      </div>
+      <div class="rhs">
+        <span class="grow-meta">895<span class="kor">점</span></span>
+        <span class="hchev"></span>
+      </div>
+    </a>
+    <a class="abs hier-row grow" href="https://swg2210.github.io/socre/">
+      <div class="lhs">
+        <span class="hbadge grow">성장</span>
+        <span class="name">신용성장계좌</span>
+      </div>
+      <div class="rhs">
+        <span class="grow-meta">847<span class="kor">점</span></span>
+        <span class="hchev"></span>
+      </div>
+    </a>
+
     <!-- Ring gauge view (mode-ring only) -->
     <div class="abs ring-gauge">
-      <div class="ring-wrap">
+      <a class="ring-wrap" href="https://swg2210.github.io/socre/">
         <svg viewBox="0 0 200 200" width="160" height="160">
           <defs>
             <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
@@ -549,11 +631,11 @@
           <div class="ring-label"><span class="brand">Npay</span> 스코어</div>
           <div class="ring-num">895<span class="unit">점</span></div>
         </div>
-      </div>
+      </a>
       <div class="ring-stats">
         <div><span class="k">NICE</span><span class="v">1000<span class="unit">점</span></span></div>
         <div><span class="k">KCB</span><span class="v">988<span class="unit">점</span></span></div>
-        <div><span class="k">신용성장계좌</span><span class="v">847<span class="unit">점</span></span></div>
+        <a class="grow-link" href="https://swg2210.github.io/socre/"><span class="k">신용성장계좌</span><span class="v">847<span class="unit">점</span></span></a>
       </div>
     </div>
 
@@ -667,17 +749,18 @@
   <script>
     (function () {
       const btns = document.querySelectorAll('.vt-btn');
-      const MODES = ['label', 'score', 'ring'];
+      const MODES = ['label', 'score', 'ring', 'hier'];
+      const STANDALONE = ['ring', 'hier'];
       const STYLES = ['text', 'badge'];
       const isEmbedded = window.parent !== window;
       if (isEmbedded) document.body.classList.add('embedded');
       function setState(mode, style) {
         if (!MODES.includes(mode)) mode = 'label';
         const embedCls = isEmbedded ? ' embedded' : '';
-        if (mode === 'ring') {
-          document.body.className = 'mode-ring' + embedCls;
-          btns.forEach(b => b.classList.toggle('active', b.dataset.mode === 'ring'));
-          const want = '#ring';
+        if (STANDALONE.includes(mode)) {
+          document.body.className = 'mode-' + mode + embedCls;
+          btns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+          const want = '#' + mode;
           if (location.hash !== want) history.replaceState(null, '', want);
           return;
         }
@@ -693,8 +776,8 @@
       btns.forEach(b => b.addEventListener('click', () => setState(b.dataset.mode, b.dataset.style)));
       function applyFromHash() {
         const hash = location.hash.slice(1) || 'label-text';
-        if (hash === 'ring') {
-          setState('ring');
+        if (STANDALONE.includes(hash)) {
+          setState(hash);
         } else {
           const [m, s] = hash.split('-');
           setState(m, s);
