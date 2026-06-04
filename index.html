@@ -520,29 +520,16 @@
   }
 </style>
 </head>
-<body class="mode-label style-text">
+<body class="mode-hier case-done">
 
   <!-- Prototype version toggle (not part of design) -->
   <div class="version-toggle">
     <div class="vt-section">
-      <div class="vt-title">E안 · 리스트형</div>
-      <button class="vt-btn" type="button" data-mode="label" data-style="text">문구형</button>
-      <button class="vt-btn" type="button" data-mode="label" data-style="badge">문구형(뱃지)</button>
-      <button class="vt-btn" type="button" data-mode="score" data-style="text">점수형</button>
-      <button class="vt-btn" type="button" data-mode="score" data-style="badge">점수형(뱃지)</button>
-    </div>
-    <div class="vt-section single">
-      <div class="vt-title">I안 · Npay 히어로</div>
-      <button class="vt-btn" type="button" data-mode="ring">링 게이지</button>
-    </div>
-    <div class="vt-section single">
-      <div class="vt-title">H안 · 위계 라벨</div>
-      <button class="vt-btn" type="button" data-mode="hier">인라인 보조</button>
-    </div>
-    <div class="vt-section" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-150);">
       <div class="vt-title">케이스 전환</div>
-      <button class="vt-btn" type="button" data-case="pre">미생성</button>
-      <button class="vt-btn active" type="button" data-case="done">생성 완료</button>
+      <button class="vt-btn" type="button" data-nav="main-pre">메인(생성전)</button>
+      <button class="vt-btn active" type="button" data-nav="main-done">메인(생성완료)</button>
+      <button class="vt-btn" type="button" data-nav="score-pre">스코어(생성전)</button>
+      <button class="vt-btn" type="button" data-nav="score-done">스코어(생성완료)</button>
     </div>
   </div>
 
@@ -617,7 +604,6 @@
       </div>
       <div class="rhs">
         <span class="grow-meta">895<span class="kor">점</span></span>
-        <span class="hchev"></span>
       </div>
     </a>
     <a class="abs hier-row grow" id="grow-hier-row" href="https://swg2210.github.io/socre/">
@@ -628,7 +614,6 @@
       <div class="rhs">
         <span class="grow-meta cs-done">847<span class="kor">점</span></span>
         <span class="grow-make-pill cs-pre">생성하기</span>
-        <span class="hchev"></span>
       </div>
     </a>
 
@@ -770,72 +755,33 @@
 
   <script>
     (function () {
-      const btns = document.querySelectorAll('.vt-btn');
-      const MODES = ['label', 'score', 'ring', 'hier'];
-      const STANDALONE = ['ring', 'hier'];
-      const STYLES = ['text', 'badge'];
       const isEmbedded = window.parent !== window;
       if (isEmbedded) document.body.classList.add('embedded');
 
-      /* ── 케이스 전환 ── */
-      const GROW_HREFS = {
-        pre:  'https://swg2210.github.io/socre/index_loading.html',
-        done: 'https://swg2210.github.io/socre/'
-      };
-      let currentCase = 'done';
-      function setCase(c) {
-        currentCase = c;
-        document.body.classList.toggle('case-pre',  c === 'pre');
-        document.body.classList.toggle('case-done', c === 'done');
-        const href = GROW_HREFS[c];
-        ['grow-tier-row','grow-hier-row','grow-ring-link'].forEach(id => {
+      function setMainCase(c) {
+        const embedCls = isEmbedded ? ' embedded' : '';
+        document.body.className = 'mode-hier case-' + c + embedCls;
+        const href = c === 'pre'
+          ? 'https://swg2210.github.io/socre/index_loading.html'
+          : 'https://swg2210.github.io/socre/';
+        ['grow-tier-row', 'grow-hier-row', 'grow-ring-link'].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.href = href;
         });
-        document.querySelectorAll('[data-case]').forEach(b =>
-          b.classList.toggle('active', b.dataset.case === c)
+        document.querySelectorAll('[data-nav]').forEach(b =>
+          b.classList.toggle('active', b.dataset.nav === 'main-' + c)
         );
       }
-      document.querySelectorAll('[data-case]').forEach(b =>
-        b.addEventListener('click', () => setCase(b.dataset.case))
-      );
-      setCase('done'); // 기본값: 생성 완료
 
-      function setState(mode, style) {
-        if (!MODES.includes(mode)) mode = 'label';
-        const embedCls = isEmbedded ? ' embedded' : '';
-        const caseCls = ' case-' + currentCase;
-        if (STANDALONE.includes(mode)) {
-          document.body.className = 'mode-' + mode + embedCls + caseCls;
-          btns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-          document.querySelectorAll('[data-case]').forEach(b =>
-            b.classList.toggle('active', b.dataset.case === currentCase));
-          const want = '#' + mode;
-          if (location.hash !== want) history.replaceState(null, '', want);
-          return;
-        }
-        if (!STYLES.includes(style)) style = 'text';
-        document.body.className = 'mode-' + mode + ' style-' + style + embedCls + caseCls;
-        btns.forEach(b => b.classList.toggle(
-          'active',
-          (b.dataset.mode === mode && b.dataset.style === style) ||
-          (b.dataset.case === currentCase)
-        ));
-        const want = '#' + mode + '-' + style;
-        if (location.hash !== want) history.replaceState(null, '', want);
-      }
-      btns.forEach(b => { if (b.dataset.mode) b.addEventListener('click', () => setState(b.dataset.mode, b.dataset.style)); });
-      function applyFromHash() {
-        const hash = location.hash.slice(1) || 'hier';
-        if (STANDALONE.includes(hash)) {
-          setState(hash);
-        } else {
-          const [m, s] = hash.split('-');
-          setState(m, s);
-        }
-      }
-      window.addEventListener('hashchange', applyFromHash);
-      applyFromHash();
+      document.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => {
+        const nav = b.dataset.nav;
+        if      (nav === 'main-pre')   setMainCase('pre');
+        else if (nav === 'main-done')  setMainCase('done');
+        else if (nav === 'score-pre')  window.open('https://swg2210.github.io/socre', '_blank');
+        else if (nav === 'score-done') window.open('https://swg2210.github.io/socre/index.html?revealed=1', '_blank');
+      }));
+
+      setMainCase('done');
     })();
   </script>
 </body>
