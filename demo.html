@@ -1,135 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>네이버페이 스코어 · 플로우 데모</title>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-  <style>
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+<meta charset="utf-8" />
+<meta name="viewport" content="width=375, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>네이버페이 스코어 · 데모</title>
+<style>
+  :root {
+    --gray-150: #F3F5F7;
+    --gray-600: #929294;
+    --gray-700: #6F6F76;
+    --gray-900: #1E1E23;
+    --font-kr: "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  html, body { background: #d9d9d9; }
+  body { font-family: var(--font-kr); color: var(--gray-900); display: flex; justify-content: center; min-height: 100vh; }
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  .device {
+    width: 375px;
+    height: 1100px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0,0,0,0.08);
+  }
+  .device iframe {
+    width: 375px;
+    height: 1100px;
+    border: none;
+    display: block;
+  }
 
-    :root {
-      --bg: #1c1c1e;
-      --bar-h: 56px;
-      --shell-w: 375px;
-      --shell-h: 812px;
-    }
-
-    body {
-      background: var(--bg);
-      font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* ── Top toggle bar ── */
-    .toggle-bar {
-      position: fixed; top: 0; left: 0; right: 0;
-      height: var(--bar-h);
-      background: rgba(28,28,30,0.96);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; justify-content: center;
-      gap: 6px; z-index: 100; padding: 0 20px;
-    }
-    .tb-label {
-      font-size: 11px; color: #666; font-weight: 700;
-      letter-spacing: 0.8px; text-transform: uppercase;
-      margin-right: 4px; white-space: nowrap;
-    }
-    .tb-btn {
-      padding: 6px 14px;
-      border: 1.5px solid rgba(255,255,255,0.15);
-      background: transparent;
-      color: #888;
-      font-size: 12px; font-weight: 600; border-radius: 20px;
-      cursor: pointer; white-space: nowrap; letter-spacing: -0.2px;
-      font-family: inherit;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    }
-    .tb-btn:hover { border-color: rgba(255,255,255,0.3); color: #bbb; }
-    .tb-btn.active {
-      background: #fff; border-color: #fff; color: #1a1a1a;
-    }
-    .tb-sep {
-      width: 1px; height: 20px;
-      background: rgba(255,255,255,0.1);
-      margin: 0 4px;
-    }
-
-    /* ── Device shell ── */
-    .stage {
-      padding-top: calc(var(--bar-h) + 32px);
-      padding-bottom: 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-    }
-    .case-label {
-      font-size: 11px; font-weight: 700; color: #555;
-      letter-spacing: 0.6px; text-transform: uppercase;
-    }
-    .device-shell {
-      width: var(--shell-w);
-      height: var(--shell-h);
-      border-radius: 44px;
-      overflow: hidden;
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.06),
-        0 32px 80px rgba(0,0,0,0.6),
-        0 8px 24px rgba(0,0,0,0.4);
-      background: #000;
-      position: relative;
-    }
-    .device-shell iframe {
-      width: 100%; height: 100%;
-      border: none; display: block;
-    }
-
-    /* Loading overlay */
-    .loading-overlay {
-      position: absolute; inset: 0;
-      background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s ease;
-    }
-    .loading-overlay.visible { opacity: 1; pointer-events: auto; }
-    .spinner {
-      width: 28px; height: 28px;
-      border: 3px solid #eee; border-top-color: #03C75A;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+  /* ── Version toggle (identical to index.html) ── */
+  .version-toggle {
+    position: fixed;
+    top: 16px; right: 16px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+    z-index: 100;
+    font-family: var(--font-kr);
+    min-width: 180px;
+  }
+  .vt-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .vt-title {
+    font-size: 10px; font-weight: 700; color: var(--gray-600);
+    letter-spacing: 0.6px; text-transform: uppercase;
+    grid-column: 1 / -1;
+    padding: 0 4px 6px;
+  }
+  .vt-btn {
+    padding: 7px 14px;
+    border: none; background: transparent;
+    font-size: 13px; font-weight: 600;
+    color: var(--gray-700);
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: -0.3px;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+    text-align: center;
+    font-family: inherit;
+  }
+  .vt-btn.active { background: var(--gray-900); color: #fff; }
+</style>
 </head>
 <body>
 
-  <div class="toggle-bar">
-    <span class="tb-label">케이스</span>
-    <button class="tb-btn" data-nav="main-pre">메인 · 생성전</button>
-    <button class="tb-btn active" data-nav="main-done">메인 · 생성완료</button>
-    <div class="tb-sep"></div>
-    <button class="tb-btn" data-nav="score-pre">스코어 · 생성전</button>
-    <button class="tb-btn" data-nav="score-done">스코어 · 생성완료</button>
+  <div class="version-toggle">
+    <div class="vt-section">
+      <div class="vt-title">케이스 전환</div>
+      <button class="vt-btn" data-nav="main-pre">메인(생성전)</button>
+      <button class="vt-btn active" data-nav="main-done">메인(생성완료)</button>
+      <button class="vt-btn" data-nav="score-pre">스코어(생성전)</button>
+      <button class="vt-btn" data-nav="score-done">스코어(생성완료)</button>
+    </div>
   </div>
 
-  <div class="stage">
-    <div class="case-label" id="case-label">메인 · 생성완료</div>
-    <div class="device-shell">
-      <iframe id="demo-frame" src="https://swg2210.github.io/npscore-prototype/" title="데모"></iframe>
-      <div class="loading-overlay" id="loading-overlay">
-        <div class="spinner"></div>
-      </div>
-    </div>
+  <div class="device">
+    <iframe id="demo-frame" src="https://swg2210.github.io/npscore-prototype/"></iframe>
   </div>
 
   <script>
@@ -139,29 +93,13 @@
       'score-pre':  'https://swg2210.github.io/socre/',
       'score-done': 'https://swg2210.github.io/socre/index.html?revealed=1'
     };
-    const LABELS = {
-      'main-pre':   '메인 · 생성전',
-      'main-done':  '메인 · 생성완료',
-      'score-pre':  '스코어 · 생성전',
-      'score-done': '스코어 · 생성완료'
-    };
-
-    const frame   = document.getElementById('demo-frame');
-    const overlay = document.getElementById('loading-overlay');
-    const label   = document.getElementById('case-label');
-
-    function navigate(nav) {
-      overlay.classList.add('visible');
-      frame.src = URLS[nav];
-      label.textContent = LABELS[nav];
-      document.querySelectorAll('.tb-btn').forEach(x => x.classList.remove('active'));
-      document.querySelector(`[data-nav="${nav}"]`).classList.add('active');
-    }
-
-    frame.addEventListener('load', () => overlay.classList.remove('visible'));
-
-    document.querySelectorAll('.tb-btn').forEach(b =>
-      b.addEventListener('click', () => navigate(b.dataset.nav))
+    const frame = document.getElementById('demo-frame');
+    document.querySelectorAll('.vt-btn').forEach(b =>
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.vt-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        frame.src = URLS[b.dataset.nav];
+      })
     );
   </script>
 </body>
