@@ -394,6 +394,21 @@
   /* ── Hide internal floating toggle when embedded in iframe ── */
   body.embedded .version-toggle { display: none; }
 
+  /* ── Case state: 미생성 vs 생성완료 ── */
+  body.case-done .cs-pre { display: none !important; }
+  body.case-pre  .cs-done { display: none !important; }
+
+  .grow-make-pill {
+    height: 24px; padding: 0 12px; border-radius: 12px;
+    background: var(--gray-900); color: #fff;
+    font-size: 12px; font-weight: 700; letter-spacing: -0.2px;
+    display: inline-flex; align-items: center;
+    white-space: nowrap;
+  }
+  body.style-badge .grow-make-pill {
+    height: 26px; font-size: 13px;
+  }
+
   /* ── Ring gauge mode (I안: Npay 히어로) ── */
   .ring-gauge {
     display: none;
@@ -524,6 +539,11 @@
       <div class="vt-title">H안 · 위계 라벨</div>
       <button class="vt-btn" type="button" data-mode="hier">인라인 보조</button>
     </div>
+    <div class="vt-section" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-150);">
+      <div class="vt-title">케이스 전환</div>
+      <button class="vt-btn" type="button" data-case="pre">미생성</button>
+      <button class="vt-btn active" type="button" data-case="done">생성 완료</button>
+    </div>
   </div>
 
   <main class="device">
@@ -576,15 +596,16 @@
     </a>
 
     <!-- E variant: 성장계좌 row -->
-    <a class="abs tier-row grow" href="https://swg2210.github.io/socre/">
+    <a class="abs tier-row grow" id="grow-tier-row" href="https://swg2210.github.io/socre/">
       <div class="lhs">
         <span class="name">신용성장계좌</span>
       </div>
       <div class="rhs">
-        <span class="rhs-badge grow">
+        <span class="rhs-badge grow cs-done">
           <span class="v-label"><span class="num">+12</span>점 성장중</span>
           <span class="v-score"><span class="num">847</span>점</span>
         </span>
+        <span class="grow-make-pill cs-pre">생성하기</span>
       </div>
     </a>
 
@@ -599,13 +620,14 @@
         <span class="hchev"></span>
       </div>
     </a>
-    <a class="abs hier-row grow" href="https://swg2210.github.io/socre/">
+    <a class="abs hier-row grow" id="grow-hier-row" href="https://swg2210.github.io/socre/">
       <div class="lhs">
         <span class="hbadge grow">성장</span>
         <span class="name">신용성장계좌</span>
       </div>
       <div class="rhs">
-        <span class="grow-meta">847<span class="kor">점</span></span>
+        <span class="grow-meta cs-done">847<span class="kor">점</span></span>
+        <span class="grow-make-pill cs-pre">생성하기</span>
         <span class="hchev"></span>
       </div>
     </a>
@@ -635,7 +657,7 @@
       <div class="ring-stats">
         <div><span class="k">NICE</span><span class="v">1000<span class="unit">점</span></span></div>
         <div><span class="k">KCB</span><span class="v">988<span class="unit">점</span></span></div>
-        <a class="grow-link" href="https://swg2210.github.io/socre/"><span class="k">신용성장계좌</span><span class="v">847<span class="unit">점</span></span></a>
+        <a class="grow-link" id="grow-ring-link" href="https://swg2210.github.io/socre/"><span class="k">신용성장계좌</span><span class="v cs-done">847<span class="unit">점</span></span><span class="v cs-pre" style="font-size:12px;font-weight:700;color:var(--npay);">생성하기</span></a>
       </div>
     </div>
 
@@ -754,28 +776,57 @@
       const STYLES = ['text', 'badge'];
       const isEmbedded = window.parent !== window;
       if (isEmbedded) document.body.classList.add('embedded');
+
+      /* ── 케이스 전환 ── */
+      const GROW_HREFS = {
+        pre:  'https://swg2210.github.io/socre/index_loading.html',
+        done: 'https://swg2210.github.io/socre/'
+      };
+      let currentCase = 'done';
+      function setCase(c) {
+        currentCase = c;
+        document.body.classList.toggle('case-pre',  c === 'pre');
+        document.body.classList.toggle('case-done', c === 'done');
+        const href = GROW_HREFS[c];
+        ['grow-tier-row','grow-hier-row','grow-ring-link'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.href = href;
+        });
+        document.querySelectorAll('[data-case]').forEach(b =>
+          b.classList.toggle('active', b.dataset.case === c)
+        );
+      }
+      document.querySelectorAll('[data-case]').forEach(b =>
+        b.addEventListener('click', () => setCase(b.dataset.case))
+      );
+      setCase('done'); // 기본값: 생성 완료
+
       function setState(mode, style) {
         if (!MODES.includes(mode)) mode = 'label';
         const embedCls = isEmbedded ? ' embedded' : '';
+        const caseCls = ' case-' + currentCase;
         if (STANDALONE.includes(mode)) {
-          document.body.className = 'mode-' + mode + embedCls;
+          document.body.className = 'mode-' + mode + embedCls + caseCls;
           btns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+          document.querySelectorAll('[data-case]').forEach(b =>
+            b.classList.toggle('active', b.dataset.case === currentCase));
           const want = '#' + mode;
           if (location.hash !== want) history.replaceState(null, '', want);
           return;
         }
         if (!STYLES.includes(style)) style = 'text';
-        document.body.className = 'mode-' + mode + ' style-' + style + embedCls;
+        document.body.className = 'mode-' + mode + ' style-' + style + embedCls + caseCls;
         btns.forEach(b => b.classList.toggle(
           'active',
-          b.dataset.mode === mode && b.dataset.style === style
+          (b.dataset.mode === mode && b.dataset.style === style) ||
+          (b.dataset.case === currentCase)
         ));
         const want = '#' + mode + '-' + style;
         if (location.hash !== want) history.replaceState(null, '', want);
       }
-      btns.forEach(b => b.addEventListener('click', () => setState(b.dataset.mode, b.dataset.style)));
+      btns.forEach(b => { if (b.dataset.mode) b.addEventListener('click', () => setState(b.dataset.mode, b.dataset.style)); });
       function applyFromHash() {
-        const hash = location.hash.slice(1) || 'label-text';
+        const hash = location.hash.slice(1) || 'hier';
         if (STANDALONE.includes(hash)) {
           setState(hash);
         } else {
