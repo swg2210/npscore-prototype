@@ -458,6 +458,7 @@
       <div class="content-card">
         <div class="content-header">
           <span class="content-title">카카오 알림톡</span>
+          <button class="btn-green" onclick="showView('kakao-add')">카테고리 추가</button>
         </div>
         <table>
           <thead>
@@ -643,6 +644,7 @@
       <div class="content-card">
         <div class="content-header">
           <span class="content-title">네이버 앱</span>
+          <button class="btn-green" onclick="showView('naver-add')">카테고리 추가</button>
         </div>
         <table>
           <thead>
@@ -806,6 +808,7 @@
       <div class="content-card">
         <div class="content-header">
           <span class="content-title">변수 카탈로그</span>
+          <button class="btn-green" onclick="showView('variables-add')">변수 추가</button>
         </div>
 
         <div class="info-box blue">
@@ -829,6 +832,195 @@
           </thead>
           <tbody id="variables-tbody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW: 카카오 알림톡 — 추가
+    ======================================================== -->
+    <div class="view" id="view-kakao-add">
+      <div class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <button class="btn-back" onclick="showView('kakao-list')">← 목록으로</button>
+            <span class="content-title">카카오 알림톡 추가</span>
+          </div>
+        </div>
+
+        <div class="info-box">
+          ⚠️ 신규 카테고리 추가는 <strong>개발팀 협의 후</strong> 실제 발송 연동이 필요합니다.
+          어드민에 등록 후 templateCode를 비즈톡에 먼저 등록하세요.
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">카테고리 정보</div>
+          <div class="form-row">
+            <div class="form-label">카테고리명<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-kakao-name" placeholder="예: 신용정보 변동">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">카테고리 코드<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-kakao-code" placeholder="예: CREDIT_INFO_CHANGE">
+              <div class="form-hint">대문자 + 언더스코어 형식. 개발팀과 사전 협의된 코드를 사용하세요.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">발송 설정</div>
+          <div class="form-row">
+            <div class="form-label">템플릿 코드 (tmpltCode)<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-kakao-tmplt" placeholder="비즈톡 등록 템플릿 코드">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">메시지 (message)<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <textarea class="form-control" id="add-kakao-message" rows="5"
+                        placeholder="알림톡 본문 내용 — 변수: #{score}, #{user_name} 등"></textarea>
+              <div class="form-hint warn">비즈톡 등록본과 완전히 일치해야 합니다.</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">제목 (title)</div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-kakao-title" placeholder="강조표기형에만 사용 (선택)">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-green filled" onclick="addKakaoCategory()">추가</button>
+          <button class="btn-outline" onclick="showView('kakao-list')">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW: 네이버 앱 — 추가
+    ======================================================== -->
+    <div class="view" id="view-naver-add">
+      <div class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <button class="btn-back" onclick="showView('naver-list')">← 목록으로</button>
+            <span class="content-title">네이버 앱 추가</span>
+          </div>
+        </div>
+
+        <div class="info-box">
+          ⚠️ 신규 카테고리 추가는 <strong>개발팀 협의 후</strong> 실제 발송 연동이 필요합니다.
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">카테고리 정보</div>
+          <div class="form-row">
+            <div class="form-label">카테고리명<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-naver-name" placeholder="예: 신용정보 변동">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">카테고리 코드<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-naver-code" placeholder="예: CREDIT_INFO_CHANGE">
+              <div class="form-hint">대문자 + 언더스코어 형식. 개발팀과 사전 협의된 코드를 사용하세요.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">알림 내용</div>
+          <div class="form-row">
+            <div class="form-label">모바일 메시지<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <textarea class="form-control" id="add-naver-mobile" rows="3"
+                        placeholder="모바일 앱 알림 내용 — 변수: {score}, {user_name} 등"></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">푸시 알림 내용<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <textarea class="form-control" id="add-naver-push" rows="3"
+                        placeholder="푸시 알림 내용"></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">푸시 제목</div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-naver-push-title" placeholder="nPushInfo.title">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">링크 URL</div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-naver-link" placeholder="https://pay.naver.com/...">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-green filled" onclick="addNaverCategory()">추가</button>
+          <button class="btn-outline" onclick="showView('naver-list')">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW: 변수 카탈로그 — 추가
+    ======================================================== -->
+    <div class="view" id="view-variables-add">
+      <div class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <button class="btn-back" onclick="showView('variables')">← 목록으로</button>
+            <span class="content-title">변수 추가</span>
+          </div>
+        </div>
+
+        <div class="info-box">
+          ⚠️ 새 변수는 <strong>개발팀 배포 후</strong> 실제 알림 문구에 사용할 수 있습니다.
+          여기서는 카탈로그에 문서화 목적으로 등록합니다.
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">변수 정보</div>
+          <div class="form-row">
+            <div class="form-label">변수명<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-var-name" placeholder="예: loan_amount (소문자 + 언더스코어)">
+              <div class="form-hint">네이버: <code>{변수명}</code> / 카카오: <code>#{변수명}</code> 형식으로 자동 생성됩니다.</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">설명<span class="required">*</span></div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-var-desc" placeholder="예: 대출 신청 금액 (만원)">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">예시값</div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-var-example" placeholder="예: 3000">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">데이터 소스</div>
+            <div class="form-control-wrap">
+              <input class="form-control" id="add-var-source" placeholder="예: 대출신청 API, 계산값 등">
+              <div class="form-hint">개발팀 참고용 — 어떤 API/테이블에서 오는 값인지 기입하세요.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-green filled" onclick="addVariable()">추가</button>
+          <button class="btn-outline" onclick="showView('variables')">취소</button>
+        </div>
       </div>
     </div>
 
@@ -1143,9 +1335,8 @@ function showView(viewName) {
     document.getElementById('menu-kakao').classList.add('active');
   } else if (viewName.startsWith('naver')) {
     document.getElementById('menu-naver').classList.add('active');
-  } else if (viewName === 'variables') {
+  } else if (viewName.startsWith('variables')) {
     document.getElementById('menu-vars').classList.add('active');
-    // 변수 카탈로그 섹션 자동 열기
     const sec = document.getElementById('section-var');
     if (sec.classList.contains('collapsed')) toggleSection('section-var');
   }
@@ -1208,6 +1399,79 @@ function renderVariables() {
         : '<span style="color:#bbb;font-size:11px">●&nbsp;비활성</span>'}</td>
     </tr>
   `).join('');
+}
+
+/* ─── 추가 ─── */
+function addKakaoCategory() {
+  const name = document.getElementById('add-kakao-name').value.trim();
+  const code = document.getElementById('add-kakao-code').value.trim();
+  const tmplt = document.getElementById('add-kakao-tmplt').value.trim();
+  const msg = document.getElementById('add-kakao-message').value.trim();
+  if (!name || !code || !tmplt || !msg) {
+    alert('카테고리명, 카테고리 코드, 템플릿 코드, 메시지는 필수입니다.');
+    return;
+  }
+  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'.').replace(/\.$/,'');
+  categories.push({
+    code, name,
+    kakaoTmplt: tmplt,
+    kakaoMsg: msg,
+    kakaoTitle: document.getElementById('add-kakao-title').value.trim(),
+    naverMobile: '', naverPush: '', naverPushTitle: '네이버페이 신용점수',
+    naverLink: 'https://pay.naver.com/mycredit',
+    updatedBy: 'wg-seo', updatedAt: today
+  });
+  // 입력 초기화
+  ['add-kakao-name','add-kakao-code','add-kakao-tmplt','add-kakao-message','add-kakao-title'].forEach(id => document.getElementById(id).value = '');
+  renderKakaoList();
+  showView('kakao-list');
+  showToast('카카오 알림톡 카테고리가 추가되었습니다.');
+}
+
+function addNaverCategory() {
+  const name = document.getElementById('add-naver-name').value.trim();
+  const code = document.getElementById('add-naver-code').value.trim();
+  const mobile = document.getElementById('add-naver-mobile').value.trim();
+  const push = document.getElementById('add-naver-push').value.trim();
+  if (!name || !code || !mobile || !push) {
+    alert('카테고리명, 카테고리 코드, 모바일 메시지, 푸시 내용은 필수입니다.');
+    return;
+  }
+  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\. /g,'.').replace(/\.$/,'');
+  categories.push({
+    code, name,
+    kakaoTmplt: '', kakaoMsg: '', kakaoTitle: '',
+    naverMobile: mobile, naverPush: push,
+    naverPushTitle: document.getElementById('add-naver-push-title').value.trim() || '네이버페이 신용점수',
+    naverLink: document.getElementById('add-naver-link').value.trim() || 'https://pay.naver.com/mycredit',
+    updatedBy: 'wg-seo', updatedAt: today
+  });
+  ['add-naver-name','add-naver-code','add-naver-mobile','add-naver-push','add-naver-push-title','add-naver-link'].forEach(id => document.getElementById(id).value = '');
+  renderNaverList();
+  showView('naver-list');
+  showToast('네이버 앱 카테고리가 추가되었습니다.');
+}
+
+function addVariable() {
+  const name = document.getElementById('add-var-name').value.trim();
+  const desc = document.getElementById('add-var-desc').value.trim();
+  if (!name || !desc) {
+    alert('변수명과 설명은 필수입니다.');
+    return;
+  }
+  variables.push({
+    name,
+    naver: `{${name}}`,
+    kakao: `#{${name}}`,
+    desc,
+    example: document.getElementById('add-var-example').value.trim() || '-',
+    source: document.getElementById('add-var-source').value.trim() || '-',
+    active: true
+  });
+  ['add-var-name','add-var-desc','add-var-example','add-var-source'].forEach(id => document.getElementById(id).value = '');
+  renderVariables();
+  showView('variables');
+  showToast('변수가 추가되었습니다.');
 }
 
 /* ─── 초기화 ─── */
