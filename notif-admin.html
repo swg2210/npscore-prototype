@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>정보성 알림 관리 - 어드민</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Apple SD Gothic Neo', '맑은 고딕', 'Malgun Gothic', sans-serif;
+      font-size: 12px;
+      background: #f0f0f0;
+    }
+
+    /* ─── 상단 헤더 바 ─── */
+    .header {
+      height: 36px;
+      background: #1c1c1c;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .header .logo-icon {
+      width: 20px; height: 20px;
+      background: #00c73c;
+      border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 10px; font-weight: bold; letter-spacing: -0.5px;
+    }
+    .header .logo-text { color: white; font-weight: bold; font-size: 13px; }
+    .header .badge {
+      background: #3fa140; color: white;
+      font-size: 9px; padding: 1px 5px; border-radius: 2px; font-weight: bold; letter-spacing: 0.5px;
+    }
+
+    /* ─── 상단 네비게이션 바 ─── */
+    .top-nav {
+      height: 36px;
+      background: white;
+      border-bottom: 1px solid #d0d0d0;
+      display: flex;
+      align-items: stretch;
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+    .top-nav a {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 13px;
+      text-decoration: none;
+      color: #333;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+    }
+    .top-nav a:hover { background: #f7f7f7; }
+    .top-nav a.active { font-weight: bold; color: #222; border-bottom-color: #333; }
+
+    /* ─── 레이아웃 ─── */
+    .layout {
+      display: flex;
+      height: calc(100vh - 72px);
+    }
+
+    /* ─── 사이드바 ─── */
+    .sidebar {
+      width: 210px;
+      min-width: 210px;
+      background: white;
+      border-right: 1px solid #d8d8d8;
+      overflow-y: auto;
+    }
+    .sidebar-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 14px;
+      font-weight: bold;
+      font-size: 12px;
+      color: #1a1a1a;
+      cursor: pointer;
+      border-bottom: 1px solid #ebebeb;
+      user-select: none;
+    }
+    .sidebar-section-header:hover { background: #f7f7f7; }
+    .sidebar-section-header .toggle { font-size: 15px; color: #888; font-weight: normal; line-height: 1; }
+    .sidebar-items { padding: 4px 0; border-bottom: 1px solid #ebebeb; }
+    .sidebar-items.collapsed { display: none; }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px 6px 24px;
+      color: #545454;
+      cursor: pointer;
+      font-size: 12px;
+      text-decoration: none;
+      user-select: none;
+    }
+    .sidebar-item::before { content: '•'; color: #c0c0c0; font-size: 10px; }
+    .sidebar-item:hover { background: #f5f5f5; color: #222; }
+    .sidebar-item.active { color: #e00; font-weight: bold; }
+    .sidebar-item.active::before { color: #e00; }
+
+    /* ─── 콘텐츠 영역 ─── */
+    .content {
+      flex: 1;
+      background: #f0f0f0;
+      overflow-y: auto;
+      padding: 20px 24px;
+    }
+    .content-card {
+      background: white;
+      padding: 22px 26px 28px;
+    }
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ebebeb;
+    }
+    .content-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .content-title { font-size: 18px; font-weight: bold; color: #111; }
+
+    /* ─── 버튼 ─── */
+    .btn-green {
+      background: white;
+      color: #00aa00;
+      border: 1.5px solid #00aa00;
+      padding: 7px 22px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      font-weight: bold;
+      transition: background 0.1s;
+    }
+    .btn-green:hover { background: #f0fff0; }
+    .btn-green.filled {
+      background: #00aa00;
+      color: white;
+    }
+    .btn-green.filled:hover { background: #009000; }
+    .btn-green:disabled {
+      border-color: #ccc; color: #aaa; cursor: not-allowed;
+    }
+    .btn-outline {
+      background: white;
+      color: #444;
+      border: 1px solid #ccc;
+      padding: 7px 18px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    .btn-outline:hover { background: #f5f5f5; }
+    .btn-back {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .btn-back:hover { color: #222; text-decoration: underline; }
+    .btn-test {
+      background: white;
+      color: #0064c8;
+      border: 1px solid #0064c8;
+      padding: 6px 14px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    .btn-test:hover { background: #f0f6ff; }
+
+    /* ─── 테이블 ─── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr {
+      border-top: 2px solid #222;
+      border-bottom: 1px solid #ccc;
+      background: #fafafa;
+    }
+    thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: bold;
+      font-size: 12px;
+      color: #222;
+    }
+    tbody tr { border-bottom: 1px solid #ebebeb; }
+    tbody tr:hover { background: #fafcff; }
+    tbody td { padding: 10px 14px; font-size: 12px; color: #333; }
+    .link-action {
+      color: #444;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .link-action:hover { text-decoration: underline; }
+    code.tag {
+      background: #f3f3f3;
+      border: 1px solid #e0e0e0;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-family: 'Consolas', 'D2Coding', monospace;
+      color: #333;
+    }
+
+    /* ─── 폼 ─── */
+    .form-section { margin-bottom: 28px; }
+    .form-section-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #222;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+    .form-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .form-label {
+      width: 160px;
+      min-width: 160px;
+      font-size: 12px;
+      color: #555;
+      padding-top: 7px;
+      line-height: 1.4;
+    }
+    .required { color: #e00; margin-left: 2px; }
+    .form-control-wrap { flex: 1; }
+    .form-control {
+      width: 100%;
+      border: 1px solid #d0d0d0;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-family: inherit;
+      border-radius: 3px;
+      background: white;
+      color: #222;
+      line-height: 1.5;
+    }
+    .form-control:focus { outline: none; border-color: #5592e0; box-shadow: 0 0 0 2px rgba(85,146,224,0.15); }
+    .form-control[readonly], .form-control:disabled { background: #f5f5f5; color: #888; cursor: default; }
+    textarea.form-control { resize: vertical; min-height: 72px; }
+    .form-hint { font-size: 11px; color: #999; margin-top: 4px; line-height: 1.5; }
+    .form-hint.warn { color: #cc6600; }
+
+    /* ─── 버튼 목록 (카카오) ─── */
+    .btn-list-table { width: 100%; border-collapse: collapse; }
+    .btn-list-table th {
+      background: #f5f5f5;
+      padding: 8px 10px;
+      font-weight: bold;
+      font-size: 11px;
+      color: #444;
+      border: 1px solid #e0e0e0;
+      text-align: left;
+    }
+    .btn-list-table td {
+      padding: 6px 8px;
+      border: 1px solid #e8e8e8;
+      vertical-align: middle;
+    }
+    .btn-list-table input, .btn-list-table select {
+      width: 100%;
+      border: 1px solid #d0d0d0;
+      padding: 4px 7px;
+      font-size: 11px;
+      font-family: inherit;
+      border-radius: 2px;
+      background: white;
+    }
+    .btn-list-table input:focus, .btn-list-table select:focus {
+      outline: none; border-color: #5592e0;
+    }
+    .btn-list-table .row-no {
+      text-align: center; color: #888; font-size: 11px; width: 30px;
+    }
+
+    /* ─── 정보 박스 ─── */
+    .info-box {
+      background: #fffbec;
+      border: 1px solid #f0d890;
+      border-left: 3px solid #e0a800;
+      border-radius: 3px;
+      padding: 10px 14px;
+      font-size: 11px;
+      color: #7a5800;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .info-box.blue {
+      background: #f0f6ff;
+      border-color: #b0cff0;
+      border-left-color: #3080e0;
+      color: #1a4080;
+    }
+
+    /* ─── 저장 성공 토스트 ─── */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #222;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 9999;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ─── 폼 액션 ─── */
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid #e8e8e8;
+      align-items: center;
+    }
+    .test-required-msg {
+      font-size: 11px;
+      color: #e00;
+      margin-left: 4px;
+      display: none;
+    }
+    .test-required-msg.visible { display: inline; }
+
+    /* ─── 뷰 전환 ─── */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ─── 뱃지 타입 체크박스 ─── */
+    .badge-types-wrap { display: flex; gap: 16px; padding-top: 6px; flex-wrap: wrap; }
+    .badge-types-wrap label {
+      display: flex; align-items: center; gap: 5px;
+      cursor: pointer; color: #333;
+    }
+    .badge-types-wrap input[type=checkbox] { cursor: pointer; }
+
+    /* ─── 히스토리 탭 ─── */
+    .tab-row {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #ddd;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      padding: 8px 18px;
+      font-size: 12px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab-btn.active { color: #111; font-weight: bold; border-bottom-color: #111; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ─── 상단 헤더 바 ─── -->
+<div class="header">
+  <div class="logo-icon">N</div>
+  <span class="logo-text">네이버페이</span>
+  <span class="badge">REAL</span>
+</div>
+
+<!-- ─── 상단 네비게이션 ─── -->
+<div class="top-nav">
+  <a>서비스관리(네이버)</a>
+  <a>서비스관리(GWS)</a>
+  <a class="active">신용점수 관리</a>
+  <a>매물관리</a>
+  <a>우리집관리</a>
+  <a>정보관리</a>
+  <a>[콜센터·회원]</a>
+  <a>시스템</a>
+  <a>삭제된메뉴</a>
+</div>
+
+<!-- ─── 메인 레이아웃 ─── -->
+<div class="layout">
+
+  <!-- ─── 사이드바 ─── -->
+  <div class="sidebar">
+
+    <div class="sidebar-section-header" onclick="toggleSection('section-credit')">
+      <span>신용점수 서비스</span>
+      <span class="toggle" id="toggle-credit">+</span>
+    </div>
+    <div class="sidebar-items collapsed" id="section-credit">
+      <a class="sidebar-item">카드뉴스 관리</a>
+      <a class="sidebar-item">배너 관리</a>
+      <a class="sidebar-item">팝업 배너 관리</a>
+    </div>
+
+    <div class="sidebar-section-header" onclick="toggleSection('section-notif')">
+      <span>정보성 알림 관리</span>
+      <span class="toggle" id="toggle-notif">−</span>
+    </div>
+    <div class="sidebar-items" id="section-notif">
+      <a class="sidebar-item" id="menu-kakao" onclick="showView('kakao-list')">카카오 알림톡</a>
+      <a class="sidebar-item" id="menu-naver" onclick="showView('naver-list')">네이버 앱</a>
+    </div>
+
+    <div class="sidebar-section-header" onclick="toggleSection('section-var')">
+      <span>변수 카탈로그</span>
+      <span class="toggle" id="toggle-var">+</span>
+    </div>
+    <div class="sidebar-items collapsed" id="section-var">
+      <a class="sidebar-item">변수 목록</a>
+    </div>
+
+  </div>
+
+  <!-- ─── 콘텐츠 영역 ─── -->
+  <div class="content">
+
+    <!-- ========================================================
+         VIEW: 카카오 알림톡 — 목록
+    ======================================================== -->
+    <div class="view active" id="view-kakao-list">
+      <div class="content-card">
+        <div class="content-header">
+          <span class="content-title">카카오 알림톡</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:180px">카테고리명</th>
+              <th style="width:200px">카테고리 ID (categorytype)</th>
+              <th style="width:200px">템플릿 코드 (tmpltCode)</th>
+              <th style="width:100px">최근 수정자</th>
+              <th style="width:110px">최근 수정일</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="kakao-list-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW: 카카오 알림톡 — 수정
+    ======================================================== -->
+    <div class="view" id="view-kakao-edit">
+      <div class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <button class="btn-back" onclick="showView('kakao-list')">← 목록으로</button>
+            <span class="content-title">카카오 알림톡 수정</span>
+          </div>
+        </div>
+
+        <div class="info-box">
+          ⚠️ <strong>메시지 내용</strong>은 비즈톡에 등록된 템플릿과 <strong>한 글자도 달라선 안 됩니다.</strong> (띄어쓰기·줄바꿈은 허용)
+          템플릿 코드(tmpltCode)를 교체할 경우 <strong>테스트 발송 성공 후</strong> 저장 버튼이 활성화됩니다.
+        </div>
+
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="switchTab('kakao-edit', 'edit')">편집</button>
+          <button class="tab-btn" onclick="switchTab('kakao-edit', 'history')">변경 이력</button>
+        </div>
+
+        <!-- 편집 탭 -->
+        <div class="tab-panel active" id="kakao-edit-tab-edit">
+
+          <div class="form-section">
+            <div class="form-section-title">기본 정보</div>
+            <div class="form-row">
+              <div class="form-label">카테고리명</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-kakao-category-name" readonly>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">카테고리 코드</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-kakao-category-code" readonly>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">발송 설정</div>
+
+            <div class="form-row">
+              <div class="form-label">템플릿 코드 (tmpltCode)<span class="required">*</span></div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-kakao-tmplt-code"
+                       placeholder="비즈톡 등록 템플릿 코드"
+                       oninput="onTmpltCodeChange()">
+                <div class="form-hint">비즈톡에 등록된 정확한 코드를 입력하세요. 변경 시 테스트 발송이 필요합니다.</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-label">메시지 (message)<span class="required">*</span></div>
+              <div class="form-control-wrap">
+                <textarea class="form-control" id="edit-kakao-message" rows="6"
+                          placeholder="알림톡 본문 내용 — 변수: #{score}, #{score_diff}, #{date}, #{user_name}"></textarea>
+                <div class="form-hint warn">비즈톡 등록본과 완전히 일치해야 합니다. 다를 경우 발송 실패합니다.</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-label">제목 (title)</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-kakao-title"
+                       placeholder="강조표기형 템플릿에만 사용 (선택)">
+                <div class="form-hint">강조표기형 템플릿이 아닌 경우 비워두세요.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">버튼 목록 (attach.button)</div>
+            <table class="btn-list-table">
+              <thead>
+                <tr>
+                  <th style="width:36px">순서</th>
+                  <th style="width:180px">버튼명 (btn_name)</th>
+                  <th style="width:80px">타입</th>
+                  <th>모바일 URL (url_mobile)</th>
+                  <th>PC URL (url_pc)</th>
+                </tr>
+              </thead>
+              <tbody id="kakao-btn-tbody">
+                <tr>
+                  <td class="row-no">1</td>
+                  <td><input type="text" id="btn1-name" placeholder="예: 신용점수 확인하기"></td>
+                  <td>
+                    <select id="btn1-type">
+                      <option value="">선택</option>
+                      <option value="WL">WL (웹링크)</option>
+                      <option value="AL">AL (앱링크)</option>
+                    </select>
+                  </td>
+                  <td><input type="text" id="btn1-url-m" placeholder="https://..."></td>
+                  <td><input type="text" id="btn1-url-p" placeholder="https://..."></td>
+                </tr>
+                <tr>
+                  <td class="row-no">2</td>
+                  <td><input type="text" id="btn2-name" placeholder="예: 자세히 보기"></td>
+                  <td>
+                    <select id="btn2-type">
+                      <option value="">선택</option>
+                      <option value="WL">WL (웹링크)</option>
+                      <option value="AL">AL (앱링크)</option>
+                    </select>
+                  </td>
+                  <td><input type="text" id="btn2-url-m" placeholder="https://..."></td>
+                  <td><input type="text" id="btn2-url-p" placeholder="https://..."></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">테스트 발송</div>
+            <div class="form-row">
+              <div class="form-label">네이버 아이디</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-kakao-test-phone"
+                       placeholder="네이버 아이디 (최대 3개, 쉼표로 구분)">
+                <div class="form-hint">사전 등록된 아이디만 사용 가능합니다. ※ 테스트 발송도 과금됩니다.</div>
+              </div>
+            </div>
+            <div style="margin-top: 10px; display:flex; align-items:center; gap:12px;">
+              <button class="btn-test" onclick="doTestSend()">테스트 발송</button>
+              <span id="test-send-result" style="font-size:11px; color:#888;"></span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-green filled" id="kakao-save-btn" onclick="saveKakao()">저장</button>
+            <button class="btn-outline" onclick="showView('kakao-list')">취소</button>
+            <span class="test-required-msg" id="test-required-msg">
+              ※ 템플릿 코드 변경 시 테스트 발송 성공 후 저장 가능합니다.
+            </span>
+          </div>
+        </div>
+
+        <!-- 변경 이력 탭 -->
+        <div class="tab-panel" id="kakao-edit-tab-history">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:140px">변경일시</th>
+                <th style="width:100px">변경자</th>
+                <th style="width:160px">필드</th>
+                <th>변경 전</th>
+                <th>변경 후</th>
+                <th style="width:80px">복원</th>
+              </tr>
+            </thead>
+            <tbody id="kakao-history-body"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW: 네이버 앱 — 목록
+    ======================================================== -->
+    <div class="view" id="view-naver-list">
+      <div class="content-card">
+        <div class="content-header">
+          <span class="content-title">네이버 앱</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:180px">카테고리명</th>
+              <th style="width:200px">카테고리 ID (categorytype)</th>
+              <th style="width:100px">최근 수정자</th>
+              <th style="width:110px">최근 수정일</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="naver-list-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW: 네이버 앱 — 수정
+    ======================================================== -->
+    <div class="view" id="view-naver-edit">
+      <div class="content-card">
+        <div class="content-header">
+          <div class="content-header-left">
+            <button class="btn-back" onclick="showView('naver-list')">← 목록으로</button>
+            <span class="content-title">네이버 앱 수정</span>
+          </div>
+        </div>
+
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="switchTab('naver-edit', 'edit')">편집</button>
+          <button class="tab-btn" onclick="switchTab('naver-edit', 'history')">변경 이력</button>
+        </div>
+
+        <!-- 편집 탭 -->
+        <div class="tab-panel active" id="naver-edit-tab-edit">
+
+          <div class="form-section">
+            <div class="form-section-title">기본 정보</div>
+            <div class="form-row">
+              <div class="form-label">카테고리명</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-naver-category-name" readonly>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">카테고리 코드</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-naver-category-code" readonly>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">알림 내용</div>
+            <div class="form-row">
+              <div class="form-label">모바일 메시지<span class="required">*</span></div>
+              <div class="form-control-wrap">
+                <textarea class="form-control" id="edit-naver-mobile" rows="3"
+                          placeholder="모바일 앱 알림 내용 — 변수: {score}, {score_diff}, {date}, {user_name}"></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">푸시 알림 내용<span class="required">*</span></div>
+              <div class="form-control-wrap">
+                <textarea class="form-control" id="edit-naver-push" rows="3"
+                          placeholder="푸시 알림 내용"></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">
+                my 메시지
+                <div style="font-size:10px; color:#bbb; font-weight:normal;">(페이앱 미사용)</div>
+              </div>
+              <div class="form-control-wrap">
+                <textarea class="form-control" id="edit-naver-my" rows="2"
+                          placeholder="(현재 미사용)" style="color:#bbb;"></textarea>
+                <div class="form-hint">현재 페이앱에서 사용하지 않는 필드입니다.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">
+                PC 메시지
+                <div style="font-size:10px; color:#bbb; font-weight:normal;">(페이앱 미사용)</div>
+              </div>
+              <div class="form-control-wrap">
+                <textarea class="form-control" id="edit-naver-pc" rows="2"
+                          placeholder="(현재 미사용)" style="color:#bbb;"></textarea>
+                <div class="form-hint">현재 페이앱에서 사용하지 않는 필드입니다.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">발송 설정</div>
+            <div class="form-row">
+              <div class="form-label">푸시 제목</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-naver-push-title"
+                       placeholder="nPushInfo.title">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">링크 URL</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-naver-link"
+                       placeholder="https://pay.naver.com/...">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">뱃지 타입 (badgeTypes)</div>
+              <div class="form-control-wrap">
+                <div class="badge-types-wrap">
+                  <label><input type="checkbox" id="badge-score-up"> SCORE_UP</label>
+                  <label><input type="checkbox" id="badge-score-down"> SCORE_DOWN</label>
+                  <label><input type="checkbox" id="badge-info"> INFO</label>
+                  <label><input type="checkbox" id="badge-loan"> LOAN</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-label">푸시 활성화 (enablePush)</div>
+              <div class="form-control-wrap" style="padding-top:6px;">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                  <input type="checkbox" id="edit-naver-enable-push" checked>
+                  <span>활성화</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-green filled" onclick="saveNaver()">저장</button>
+            <button class="btn-outline" onclick="showView('naver-list')">취소</button>
+          </div>
+        </div>
+
+        <!-- 변경 이력 탭 -->
+        <div class="tab-panel" id="naver-edit-tab-history">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:140px">변경일시</th>
+                <th style="width:100px">변경자</th>
+                <th style="width:160px">필드</th>
+                <th>변경 전</th>
+                <th>변경 후</th>
+                <th style="width:80px">복원</th>
+              </tr>
+            </thead>
+            <tbody id="naver-history-body"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .layout -->
+
+<!-- 토스트 알림 -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── 데이터 ─── */
+// category_id (categorytype) → Korean name 매핑 (dictionary.json 기준)
+const CATEGORY_NAME_MAP = {
+  'CREDIT_INFO_CHANGE':      '신용정보 변동',
+  'CREDIT_INFO_INQUIRY':     '조회이력',
+  'CREDIT_INFO_LOANCOMPARE': '대출비교',
+  'CREDIT_INFO_CARDCOMPARE': '카드비교',
+  'CREDIT_SCORE_NEW':        'NICE점수',
+  'CREDIT_SCORE_KCB':        'KCB점수',
+  'CREDIT_LOANREPORT_RATE':  '대출리포트',
+};
+
+const categories = [
+  {
+    code: 'CREDIT_INFO_CHANGE',
+    name: CATEGORY_NAME_MAP['CREDIT_INFO_CHANGE'],
+    kakaoTmplt: 'NPS_CREDIT_INFO_CHG',
+    kakaoMsg: '[네이버페이]\n#{user_name}님의 신용정보가 변동되었습니다.\n변동 내용을 확인해보세요.',
+    kakaoTitle: '신용정보 변동 알림',
+    naverMobile: '{user_name}님의 신용정보가 변동되었습니다.',
+    naverPush: '신용정보 변동 알림이 도착했습니다.',
+    naverPushTitle: '네이버페이 신용점수',
+    naverLink: 'https://pay.naver.com/mycredit',
+    updatedBy: 'wg-seo', updatedAt: '2026.07.01'
+  },
+  {
+    code: 'CREDIT_INFO_INQUIRY',
+    name: CATEGORY_NAME_MAP['CREDIT_INFO_INQUIRY'],
+    kakaoTmplt: 'NPS_CREDIT_INQ',
+    kakaoMsg: '[네이버페이]\n#{user_name}님의 신용점수 조회가 요청되었습니다.\n조회 내역을 확인해보세요.',
+    kakaoTitle: '',
+    naverMobile: '{user_name}님의 신용점수 조회 내역이 있습니다.',
+    naverPush: '신용점수 조회 알림이 도착했습니다.',
+    naverPushTitle: '네이버페이 신용점수',
+    naverLink: 'https://pay.naver.com/mycredit',
+    updatedBy: 'wg-seo', updatedAt: '2026.06.28'
+  },
+  {
+    code: 'CREDIT_INFO_LOANCOMPARE',
+    name: CATEGORY_NAME_MAP['CREDIT_INFO_LOANCOMPARE'],
+    kakaoTmplt: 'NPS_LOAN_COMP',
+    kakaoMsg: '[네이버페이]\n대출 비교 서비스 이용으로 신용점수 조회가 발생했습니다.',
+    kakaoTitle: '',
+    naverMobile: '대출비교 서비스 신용점수 조회 내역이 있습니다.',
+    naverPush: '대출비교 신용조회 알림이 도착했습니다.',
+    naverPushTitle: '네이버페이 신용점수',
+    naverLink: 'https://pay.naver.com/mycredit',
+    updatedBy: 'wg-seo', updatedAt: '2026.06.15'
+  },
+  {
+    code: 'CREDIT_INFO_CARDCOMPARE',
+    name: CATEGORY_NAME_MAP['CREDIT_INFO_CARDCOMPARE'],
+    kakaoTmplt: 'NPS_CARD_COMP',
+    kakaoMsg: '[네이버페이]\n카드 비교 서비스 이용으로 신용점수 조회가 발생했습니다.',
+    kakaoTitle: '',
+    naverMobile: '카드비교 서비스 신용점수 조회 내역이 있습니다.',
+    naverPush: '카드비교 신용조회 알림이 도착했습니다.',
+    naverPushTitle: '네이버페이 신용점수',
+    naverLink: 'https://pay.naver.com/mycredit',
+    updatedBy: 'wg-seo', updatedAt: '2026.06.15'
+  },
+  {
+    code: 'CREDIT_SCORE_NEW',
+    name: CATEGORY_NAME_MAP['CREDIT_SCORE_NEW'],
+    kakaoTmplt: 'NPS_SCORE_NICE',
+    kakaoMsg: '[네이버페이]\n#{user_name}님의 NICE 신용점수가 변동되었습니다.\n변동 전: #{prev_score}점 → 현재: #{score}점 (#{score_diff}점 #{direction})',
+    kakaoTitle: 'NICE 신용점수 변동',
+    naverMobile: '{user_name}님의 NICE 신용점수가 {score_diff}점 {direction}했습니다.\n현재: {score}점',
+    naverPush: 'NICE 신용점수 변동: {score}점 ({score_diff}점 {direction})',
+    naverPushTitle: '네이버페이 신용점수',
+    naverLink: 'https://pay.naver.com/mycredit',
+    updatedBy: 'wg-seo', updatedAt: '2026.06.20'
+  },
+  {
+    code: 'CREDIT_SCORE_KCB',
+    name: CATEGORY_NAME_MAP['CREDIT_SCORE_KCB'],
+    kakaoTmplt: 'NPS_SCORE_KCB',
+    kakaoMsg: '[네이버페이]\n#{user_name}님의 KCB 신용점수가 변동되었습니다.\n변동 전: #{prev_score}점 → 현재: #{score}점 (#{score_diff}점 #{direction})',
+    kakaoTitle: 'KCB 신용점수 변동',
+    naverMobile: '{user_name}님의 KCB 신용점수가 {score_diff}점 {direction}했습니다.\n현재: {score}점',
+    naverPush: 'KCB 신용점수 변동: {score}점 ({score_diff}점 {direction})',
+    naverPushTitle: '네이버페이 신용점수',
+    naverLink: 'https://pay.naver.com/mycredit',
+    updatedBy: 'wg-seo', updatedAt: '2026.06.20'
+  },
+  {
+    code: 'CREDIT_LOANREPORT_RATE',
+    name: CATEGORY_NAME_MAP['CREDIT_LOANREPORT_RATE'],
+    kakaoTmplt: 'NPS_LOAN_REPORT',
+    kakaoMsg: '[네이버페이]\n#{user_name}님의 대출리포트가 업데이트되었습니다.\n현재 평균 금리: #{rate}%',
+    kakaoTitle: '',
+    naverMobile: '{user_name}님의 대출리포트가 업데이트되었습니다. 평균 금리: {rate}%',
+    naverPush: '대출리포트 업데이트 알림이 도착했습니다.',
+    naverPushTitle: '네이버페이 신용점수',
+    naverLink: 'https://pay.naver.com/mycredit/loanreport',
+    updatedBy: 'wg-seo', updatedAt: '2026.05.10'
+  },
+];
+
+/* 변경 이력 (시뮬레이션) */
+const historyData = {
+  kakao: {
+    'CREDIT_SCORE_NEW': [
+      { dt: '2026.06.20 14:32', by: 'wg-seo', field: 'kakao_message', before: '...이전 메시지...', after: '...신규 메시지...' },
+      { dt: '2026.05.15 10:11', by: 'wg-seo', field: 'tmplt_code', before: 'OLD_SCORE_NICE', after: 'NPS_SCORE_NICE' },
+    ]
+  },
+  naver: {
+    'CREDIT_INFO_CHANGE': [
+      { dt: '2026.07.01 09:05', by: 'wg-seo', field: 'mobile_text', before: '신용정보 변동 안내입니다.', after: '{user_name}님의 신용정보가 변동되었습니다.' },
+    ]
+  }
+};
+
+let currentEditIndex = null;
+let tmpltCodeChanged = false;
+let testSendDone = false;
+
+/* ─── 렌더링 ─── */
+function renderKakaoList() {
+  document.getElementById('kakao-list-body').innerHTML = categories.map((c, i) => `
+    <tr>
+      <td>${c.name}</td>
+      <td><code class="tag">${c.code}</code></td>
+      <td><code class="tag">${c.kakaoTmplt}</code></td>
+      <td>${c.updatedBy}</td>
+      <td>${c.updatedAt}</td>
+      <td><a class="link-action" onclick="editKakao(${i})">수정하기</a></td>
+    </tr>
+  `).join('');
+}
+
+function renderNaverList() {
+  document.getElementById('naver-list-body').innerHTML = categories.map((c, i) => `
+    <tr>
+      <td>${c.name}</td>
+      <td><code class="tag">${c.code}</code></td>
+      <td>${c.updatedBy}</td>
+      <td>${c.updatedAt}</td>
+      <td><a class="link-action" onclick="editNaver(${i})">수정하기</a></td>
+    </tr>
+  `).join('');
+}
+
+/* ─── 편집 진입 ─── */
+function editKakao(i) {
+  currentEditIndex = i;
+  const c = categories[i];
+  document.getElementById('edit-kakao-category-name').value = c.name;
+  document.getElementById('edit-kakao-category-code').value = c.code;
+  document.getElementById('edit-kakao-tmplt-code').value = c.kakaoTmplt;
+  document.getElementById('edit-kakao-message').value = c.kakaoMsg;
+  document.getElementById('edit-kakao-title').value = c.kakaoTitle;
+  // 버튼 초기화 (예시)
+  document.getElementById('btn1-name').value = '신용점수 확인하기';
+  document.getElementById('btn1-type').value = 'WL';
+  document.getElementById('btn1-url-m').value = 'https://pay.naver.com/mycredit';
+  document.getElementById('btn1-url-p').value = 'https://pay.naver.com/mycredit';
+  document.getElementById('btn2-name').value = '';
+  document.getElementById('btn2-type').value = '';
+  document.getElementById('btn2-url-m').value = '';
+  document.getElementById('btn2-url-p').value = '';
+
+  tmpltCodeChanged = false;
+  testSendDone = false;
+  document.getElementById('test-send-result').textContent = '';
+  document.getElementById('kakao-save-btn').disabled = false;
+  document.getElementById('test-required-msg').classList.remove('visible');
+
+  // 이력 렌더
+  renderKakaoHistory(c.code);
+  switchTab('kakao-edit', 'edit');
+  showView('kakao-edit');
+}
+
+function editNaver(i) {
+  currentEditIndex = i;
+  const c = categories[i];
+  document.getElementById('edit-naver-category-name').value = c.name;
+  document.getElementById('edit-naver-category-code').value = c.code;
+  document.getElementById('edit-naver-mobile').value = c.naverMobile;
+  document.getElementById('edit-naver-push').value = c.naverPush;
+  document.getElementById('edit-naver-my').value = '';
+  document.getElementById('edit-naver-pc').value = '';
+  document.getElementById('edit-naver-push-title').value = c.naverPushTitle;
+  document.getElementById('edit-naver-link').value = c.naverLink;
+  document.getElementById('edit-naver-enable-push').checked = true;
+
+  // 뱃지 기본값 (카테고리별)
+  document.getElementById('badge-score-up').checked = c.code === 'CREDIT_SCORE_NEW' || c.code === 'CREDIT_SCORE_KCB';
+  document.getElementById('badge-score-down').checked = c.code === 'CREDIT_SCORE_NEW' || c.code === 'CREDIT_SCORE_KCB';
+  document.getElementById('badge-info').checked = c.code === 'CREDIT_INFO_CHANGE';
+  document.getElementById('badge-loan').checked = c.code === 'CREDIT_LOANREPORT_RATE';
+
+  renderNaverHistory(c.code);
+  switchTab('naver-edit', 'edit');
+  showView('naver-edit');
+}
+
+/* ─── 이력 렌더 ─── */
+function renderKakaoHistory(code) {
+  const rows = (historyData.kakao[code] || []);
+  document.getElementById('kakao-history-body').innerHTML = rows.length === 0
+    ? '<tr><td colspan="6" style="text-align:center; color:#aaa; padding:20px;">변경 이력이 없습니다.</td></tr>'
+    : rows.map(r => `
+        <tr>
+          <td>${r.dt}</td><td>${r.by}</td><td><code class="tag">${r.field}</code></td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999">${r.before}</td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${r.after}</td>
+          <td><a class="link-action" onclick="showToast('이 버전으로 복원되었습니다.')">복원</a></td>
+        </tr>
+      `).join('');
+}
+
+function renderNaverHistory(code) {
+  const rows = (historyData.naver[code] || []);
+  document.getElementById('naver-history-body').innerHTML = rows.length === 0
+    ? '<tr><td colspan="6" style="text-align:center; color:#aaa; padding:20px;">변경 이력이 없습니다.</td></tr>'
+    : rows.map(r => `
+        <tr>
+          <td>${r.dt}</td><td>${r.by}</td><td><code class="tag">${r.field}</code></td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999">${r.before}</td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${r.after}</td>
+          <td><a class="link-action" onclick="showToast('이 버전으로 복원되었습니다.')">복원</a></td>
+        </tr>
+      `).join('');
+}
+
+/* ─── tmpltCode 변경 감지 ─── */
+function onTmpltCodeChange() {
+  const c = categories[currentEditIndex];
+  const newVal = document.getElementById('edit-kakao-tmplt-code').value;
+  if (newVal !== c.kakaoTmplt) {
+    tmpltCodeChanged = true;
+    testSendDone = false;
+    document.getElementById('kakao-save-btn').disabled = true;
+    document.getElementById('test-required-msg').classList.add('visible');
+    document.getElementById('test-send-result').textContent = '';
+  } else {
+    tmpltCodeChanged = false;
+    document.getElementById('kakao-save-btn').disabled = false;
+    document.getElementById('test-required-msg').classList.remove('visible');
+  }
+}
+
+/* ─── 테스트 발송 ─── */
+function doTestSend() {
+  const phone = document.getElementById('edit-kakao-test-phone').value.trim();
+  if (!phone) {
+    document.getElementById('test-send-result').style.color = '#e00';
+    document.getElementById('test-send-result').textContent = '네이버 아이디를 입력해주세요.';
+    return;
+  }
+  document.getElementById('test-send-result').style.color = '#888';
+  document.getElementById('test-send-result').textContent = '발송 중...';
+  setTimeout(() => {
+    testSendDone = true;
+    document.getElementById('test-send-result').style.color = '#00a000';
+    document.getElementById('test-send-result').textContent = '✓ 테스트 발송 성공 — 저장 버튼이 활성화되었습니다.';
+    document.getElementById('kakao-save-btn').disabled = false;
+    document.getElementById('test-required-msg').classList.remove('visible');
+  }, 1200);
+}
+
+/* ─── 저장 ─── */
+function saveKakao() {
+  const c = categories[currentEditIndex];
+  c.kakaoTmplt = document.getElementById('edit-kakao-tmplt-code').value;
+  c.kakaoMsg = document.getElementById('edit-kakao-message').value;
+  c.kakaoTitle = document.getElementById('edit-kakao-title').value;
+  c.updatedBy = 'wg-seo';
+  c.updatedAt = '2026.07.03';
+  renderKakaoList();
+  showView('kakao-list');
+  showToast('저장되었습니다.');
+}
+
+function saveNaver() {
+  const c = categories[currentEditIndex];
+  c.naverMobile = document.getElementById('edit-naver-mobile').value;
+  c.naverPush = document.getElementById('edit-naver-push').value;
+  c.naverPushTitle = document.getElementById('edit-naver-push-title').value;
+  c.naverLink = document.getElementById('edit-naver-link').value;
+  c.updatedBy = 'wg-seo';
+  c.updatedAt = '2026.07.03';
+  renderNaverList();
+  showView('naver-list');
+  showToast('저장되었습니다.');
+}
+
+/* ─── 뷰 전환 ─── */
+function showView(viewName) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + viewName).classList.add('active');
+  document.querySelectorAll('.sidebar-item').forEach(a => a.classList.remove('active'));
+  if (viewName.startsWith('kakao')) {
+    document.getElementById('menu-kakao').classList.add('active');
+  } else if (viewName.startsWith('naver')) {
+    document.getElementById('menu-naver').classList.add('active');
+  }
+  document.querySelector('.content').scrollTop = 0;
+}
+
+/* ─── 탭 전환 ─── */
+function switchTab(formName, tabName) {
+  const container = document.getElementById('view-' + formName);
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const tabBtns = container.querySelectorAll('.tab-btn');
+  const tabPanels = container.querySelectorAll('.tab-panel');
+  const idx = tabName === 'edit' ? 0 : 1;
+  tabBtns[idx].classList.add('active');
+  tabPanels[idx].classList.add('active');
+}
+
+/* ─── 사이드바 섹션 토글 ─── */
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('collapsed');
+  const toggle = el.previousElementSibling.querySelector('.toggle');
+  if (toggle) toggle.textContent = el.classList.contains('collapsed') ? '+' : '−';
+}
+
+/* ─── 토스트 ─── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ─── 초기화 ─── */
+renderKakaoList();
+renderNaverList();
+showView('kakao-list');
+</script>
+</body>
+</html>
