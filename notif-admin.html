@@ -443,7 +443,7 @@
       <span class="toggle" id="toggle-var">+</span>
     </div>
     <div class="sidebar-items collapsed" id="section-var">
-      <a class="sidebar-item">변수 목록</a>
+      <a class="sidebar-item" id="menu-vars" onclick="showView('variables')">변수 목록</a>
     </div>
 
   </div>
@@ -799,11 +799,49 @@
       </div>
     </div>
 
+    <!-- ========================================================
+         VIEW: 변수 카탈로그
+    ======================================================== -->
+    <div class="view" id="view-variables">
+      <div class="content-card">
+        <div class="content-header">
+          <span class="content-title">변수 카탈로그</span>
+        </div>
+
+        <div class="info-box blue">
+          ℹ️ 알림 문구에서 사용할 수 있는 변수 목록입니다.
+          네이버 앱은 <code style="background:#ddeeff;padding:1px 5px;border-radius:3px">{변수명}</code> 형식,
+          카카오 알림톡은 <code style="background:#ddeeff;padding:1px 5px;border-radius:3px">#{변수명}</code> 형식으로 입력하세요.
+          새 변수 추가는 개발팀 협의 후 배포가 필요합니다.
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width:130px">변수명</th>
+              <th style="width:160px">네이버 앱</th>
+              <th style="width:160px">카카오 알림톡</th>
+              <th style="width:160px">설명</th>
+              <th style="width:100px">예시값</th>
+              <th>데이터 소스</th>
+              <th style="width:60px">상태</th>
+            </tr>
+          </thead>
+          <tbody id="variables-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div><!-- .content -->
 </div><!-- .layout -->
 
 <!-- 토스트 알림 -->
 <div class="toast" id="toast"></div>
+
+<!-- ========================================================
+     VIEW: 변수 카탈로그 — (DOM 외부에 숨겨진 뷰, .layout 밖)
+======================================================== -->
+<script id="var-view-placeholder"></script>
 
 <script>
 /* ─── 데이터 ─── */
@@ -1105,6 +1143,11 @@ function showView(viewName) {
     document.getElementById('menu-kakao').classList.add('active');
   } else if (viewName.startsWith('naver')) {
     document.getElementById('menu-naver').classList.add('active');
+  } else if (viewName === 'variables') {
+    document.getElementById('menu-vars').classList.add('active');
+    // 변수 카탈로그 섹션 자동 열기
+    const sec = document.getElementById('section-var');
+    if (sec.classList.contains('collapsed')) toggleSection('section-var');
   }
   document.querySelector('.content').scrollTop = 0;
 }
@@ -1138,8 +1181,39 @@ function showToast(msg) {
 }
 
 /* ─── 초기화 ─── */
+/* ─── 변수 카탈로그 데이터 ─── */
+const variables = [
+  { name: 'user_name',   naver: '{user_name}',   kakao: '#{user_name}',   desc: '사용자 이름',          example: '홍길동',    source: '회원 프로필', active: true },
+  { name: 'score',       naver: '{score}',        kakao: '#{score}',       desc: 'NICE 신용점수 (현재)',  example: '750',      source: 'NICE API',  active: true },
+  { name: 'score_diff',  naver: '{score_diff}',   kakao: '#{score_diff}',  desc: '점수 변동량 (절댓값)', example: '15',       source: 'NICE API',  active: true },
+  { name: 'direction',   naver: '{direction}',    kakao: '#{direction}',   desc: '변동 방향',            example: '상승/하락', source: '계산값',     active: true },
+  { name: 'prev_score',  naver: '{prev_score}',   kakao: '#{prev_score}',  desc: '이전 신용점수',        example: '735',      source: 'NICE API',  active: true },
+  { name: 'kcb_score',   naver: '{kcb_score}',    kakao: '#{kcb_score}',   desc: 'KCB 신용점수 (현재)',  example: '820',      source: 'KCB API',   active: true },
+  { name: 'kcb_diff',    naver: '{kcb_diff}',     kakao: '#{kcb_diff}',    desc: 'KCB 점수 변동량',      example: '10',       source: 'KCB API',   active: true },
+  { name: 'date',        naver: '{date}',          kakao: '#{date}',         desc: '기준일',               example: '2026.07.01', source: '발송일 기준', active: true },
+  { name: 'rate',        naver: '{rate}',          kakao: '#{rate}',         desc: '대출 평균 금리',        example: '4.5',      source: '대출리포트 API', active: true },
+];
+
+function renderVariables() {
+  document.getElementById('variables-tbody').innerHTML = variables.map(v => `
+    <tr>
+      <td><code class="tag">${v.name}</code></td>
+      <td><code class="tag">${v.naver}</code></td>
+      <td><code class="tag">${v.kakao}</code></td>
+      <td>${v.desc}</td>
+      <td style="color:#888">${v.example}</td>
+      <td style="color:#888;font-size:11px">${v.source}</td>
+      <td style="text-align:center">${v.active
+        ? '<span style="color:#00a000;font-size:11px">●&nbsp;활성</span>'
+        : '<span style="color:#bbb;font-size:11px">●&nbsp;비활성</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+/* ─── 초기화 ─── */
 renderKakaoList();
 renderNaverList();
+renderVariables();
 showView('kakao-list');
 </script>
 </body>
