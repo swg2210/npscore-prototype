@@ -828,6 +828,7 @@
               <th style="width:100px">예시값</th>
               <th>데이터 소스</th>
               <th style="width:60px">상태</th>
+              <th style="width:50px">관리</th>
             </tr>
           </thead>
           <tbody id="variables-tbody"></tbody>
@@ -1163,7 +1164,7 @@ function renderKakaoList() {
       <td><code class="tag">${c.kakaoTmplt}</code></td>
       <td>${c.updatedBy}</td>
       <td>${c.updatedAt}</td>
-      <td><a class="link-action" onclick="editKakao(${i})">수정하기</a></td>
+      <td><a class="link-action" onclick="editKakao(${i})">수정하기</a> &nbsp; <a class="link-action" style="color:#c00" onclick="deleteCategory(${i}, 'kakao')">삭제</a></td>
     </tr>
   `).join('');
 }
@@ -1175,7 +1176,7 @@ function renderNaverList() {
       <td><code class="tag">${c.code}</code></td>
       <td>${c.updatedBy}</td>
       <td>${c.updatedAt}</td>
-      <td><a class="link-action" onclick="editNaver(${i})">수정하기</a></td>
+      <td><a class="link-action" onclick="editNaver(${i})">수정하기</a> &nbsp; <a class="link-action" style="color:#c00" onclick="deleteCategory(${i}, 'naver')">삭제</a></td>
     </tr>
   `).join('');
 }
@@ -1386,7 +1387,7 @@ const variables = [
 ];
 
 function renderVariables() {
-  document.getElementById('variables-tbody').innerHTML = variables.map(v => `
+  document.getElementById('variables-tbody').innerHTML = variables.map((v, i) => `
     <tr>
       <td><code class="tag">${v.name}</code></td>
       <td><code class="tag">${v.naver}</code></td>
@@ -1397,8 +1398,26 @@ function renderVariables() {
       <td style="text-align:center">${v.active
         ? '<span style="color:#00a000;font-size:11px">●&nbsp;활성</span>'
         : '<span style="color:#bbb;font-size:11px">●&nbsp;비활성</span>'}</td>
+      <td style="text-align:center"><a class="link-action" style="color:#c00" onclick="deleteVariable(${i})">삭제</a></td>
     </tr>
   `).join('');
+}
+
+/* ─── 삭제 ─── */
+function deleteCategory(i, channel) {
+  const c = categories[i];
+  if (!confirm(`"${c.name}" 카테고리를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
+  categories.splice(i, 1);
+  if (channel === 'kakao') { renderKakaoList(); showToast('카테고리가 삭제되었습니다.'); }
+  else { renderNaverList(); showToast('카테고리가 삭제되었습니다.'); }
+}
+
+function deleteVariable(i) {
+  const v = variables[i];
+  if (!confirm(`변수 "${v.name}"을(를) 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
+  variables.splice(i, 1);
+  renderVariables();
+  showToast('변수가 삭제되었습니다.');
 }
 
 /* ─── 추가 ─── */
