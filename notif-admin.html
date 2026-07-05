@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -516,7 +516,7 @@
               <div class="form-label">메시지 (message)<span class="required">*</span></div>
               <div class="form-control-wrap">
                 <textarea class="form-control" id="edit-kakao-message" rows="6"
-                          placeholder="알림톡 본문 내용 — 변수: #{score}, #{score_diff}, #{date}, #{user_name}"></textarea>
+                          placeholder="알림톡 본문 내용 — 변수: {score}, {score_diff}, {date}, {user_name}"></textarea>
                 <div class="form-hint warn">비즈톡 등록본과 완전히 일치해야 합니다. 다를 경우 발송 실패합니다.</div>
               </div>
             </div>
@@ -795,8 +795,7 @@
 
         <div class="info-box blue">
           ℹ️ 알림 문구에서 사용할 수 있는 변수 목록입니다.
-          네이버 앱은 <code style="background:#ddeeff;padding:1px 5px;border-radius:3px">{변수명}</code> 형식,
-          카카오 알림톡은 <code style="background:#ddeeff;padding:1px 5px;border-radius:3px">#{변수명}</code> 형식으로 입력하세요.
+          네이버·카카오 공통으로 <code style="background:#ddeeff;padding:1px 5px;border-radius:3px">{변수명}</code> 형식으로 입력하세요.
           새 변수 추가는 개발팀 협의 후 배포가 필요합니다.
         </div>
 
@@ -804,8 +803,7 @@
           <thead>
             <tr>
               <th style="width:130px">변수명</th>
-              <th style="width:160px">네이버 앱</th>
-              <th style="width:160px">카카오 알림톡</th>
+              <th style="width:170px">사용법 ({...})</th>
               <th style="width:160px">설명</th>
               <th style="width:100px">예시값</th>
               <th>데이터 소스</th>
@@ -864,7 +862,7 @@
             <div class="form-label">메시지 (message)<span class="required">*</span></div>
             <div class="form-control-wrap">
               <textarea class="form-control" id="add-kakao-message" rows="5"
-                        placeholder="알림톡 본문 내용 — 변수: #{score}, #{user_name} 등"></textarea>
+                        placeholder="알림톡 본문 내용 — 변수: {score}, {user_name} 등"></textarea>
               <div class="form-hint warn">비즈톡 등록본과 완전히 일치해야 합니다.</div>
             </div>
           </div>
@@ -976,7 +974,7 @@
             <div class="form-label">변수명<span class="required">*</span></div>
             <div class="form-control-wrap">
               <input class="form-control" id="add-var-name" placeholder="예: loan_amount (소문자 + 언더스코어)">
-              <div class="form-hint">네이버: <code>{변수명}</code> / 카카오: <code>#{변수명}</code> 형식으로 자동 생성됩니다.</div>
+              <div class="form-hint">네이버·카카오 공통 <code>{변수명}</code> 형식으로 자동 생성됩니다.</div>
             </div>
           </div>
           <div class="form-row">
@@ -1036,7 +1034,7 @@ const categories = [
     code: 'CREDIT_INFO_CHANGE',
     name: CATEGORY_NAME_MAP['CREDIT_INFO_CHANGE'],
     kakaoTmplt: 'NPS_CREDIT_INFO_CHG',
-    kakaoMsg: '[네이버페이]\n#{user_name}님의 신용정보가 변동되었습니다.\n변동 내용을 확인해보세요.',
+    kakaoMsg: '[네이버페이]\n{user_name}님의 신용정보가 변동되었습니다.\n변동 내용을 확인해보세요.',
     kakaoTitle: '신용정보 변동 알림',
     naverMobile: '{user_name}님의 신용정보가 변동되었습니다.',
     naverPush: '신용정보 변동 알림이 도착했습니다.',
@@ -1048,7 +1046,7 @@ const categories = [
     code: 'CREDIT_INFO_INQUIRY',
     name: CATEGORY_NAME_MAP['CREDIT_INFO_INQUIRY'],
     kakaoTmplt: 'NPS_CREDIT_INQ',
-    kakaoMsg: '[네이버페이]\n#{user_name}님의 신용점수 조회가 요청되었습니다.\n조회 내역을 확인해보세요.',
+    kakaoMsg: '[네이버페이]\n{user_name}님의 신용점수 조회가 요청되었습니다.\n조회 내역을 확인해보세요.',
     kakaoTitle: '',
     naverMobile: '{user_name}님의 신용점수 조회 내역이 있습니다.',
     naverPush: '신용점수 조회 알림이 도착했습니다.',
@@ -1084,7 +1082,7 @@ const categories = [
     code: 'CREDIT_SCORE_NEW',
     name: CATEGORY_NAME_MAP['CREDIT_SCORE_NEW'],
     kakaoTmplt: 'NPS_SCORE_NICE',
-    kakaoMsg: '[네이버페이]\n#{user_name}님의 NICE 신용점수가 변동되었습니다.\n변동 전: #{prev_score}점 → 현재: #{score}점 (#{score_diff}점 #{direction})',
+    kakaoMsg: '[네이버페이]\n{user_name}님의 NICE 신용점수가 변동되었습니다.\n변동 전: {prev_score}점 → 현재: {score}점 ({score_diff}점 {direction})',
     kakaoTitle: 'NICE 신용점수 변동',
     naverMobile: '{user_name}님의 NICE 신용점수가 {score_diff}점 {direction}했습니다.\n현재: {score}점',
     naverPush: 'NICE 신용점수 변동: {score}점 ({score_diff}점 {direction})',
@@ -1096,7 +1094,7 @@ const categories = [
     code: 'CREDIT_SCORE_KCB',
     name: CATEGORY_NAME_MAP['CREDIT_SCORE_KCB'],
     kakaoTmplt: 'NPS_SCORE_KCB',
-    kakaoMsg: '[네이버페이]\n#{user_name}님의 KCB 신용점수가 변동되었습니다.\n변동 전: #{prev_score}점 → 현재: #{score}점 (#{score_diff}점 #{direction})',
+    kakaoMsg: '[네이버페이]\n{user_name}님의 KCB 신용점수가 변동되었습니다.\n변동 전: {prev_score}점 → 현재: {score}점 ({score_diff}점 {direction})',
     kakaoTitle: 'KCB 신용점수 변동',
     naverMobile: '{user_name}님의 KCB 신용점수가 {score_diff}점 {direction}했습니다.\n현재: {score}점',
     naverPush: 'KCB 신용점수 변동: {score}점 ({score_diff}점 {direction})',
@@ -1108,7 +1106,7 @@ const categories = [
     code: 'CREDIT_LOANREPORT_RATE',
     name: CATEGORY_NAME_MAP['CREDIT_LOANREPORT_RATE'],
     kakaoTmplt: 'NPS_LOAN_REPORT',
-    kakaoMsg: '[네이버페이]\n#{user_name}님의 대출리포트가 업데이트되었습니다.\n현재 평균 금리: #{rate}%',
+    kakaoMsg: '[네이버페이]\n{user_name}님의 대출리포트가 업데이트되었습니다.\n현재 평균 금리: {rate}%',
     kakaoTitle: '',
     naverMobile: '{user_name}님의 대출리포트가 업데이트되었습니다. 평균 금리: {rate}%',
     naverPush: '대출리포트 업데이트 알림이 도착했습니다.',
@@ -1357,23 +1355,22 @@ function showToast(msg) {
 /* ─── 초기화 ─── */
 /* ─── 변수 카탈로그 데이터 ─── */
 const variables = [
-  { name: 'user_name',   naver: '{user_name}',   kakao: '#{user_name}',   desc: '사용자 이름',          example: '홍길동',    source: '회원 프로필', active: true },
-  { name: 'score',       naver: '{score}',        kakao: '#{score}',       desc: 'NICE 신용점수 (현재)',  example: '750',      source: 'NICE API',  active: true },
-  { name: 'score_diff',  naver: '{score_diff}',   kakao: '#{score_diff}',  desc: '점수 변동량 (절댓값)', example: '15',       source: 'NICE API',  active: true },
-  { name: 'direction',   naver: '{direction}',    kakao: '#{direction}',   desc: '변동 방향',            example: '상승/하락', source: '계산값',     active: true },
-  { name: 'prev_score',  naver: '{prev_score}',   kakao: '#{prev_score}',  desc: '이전 신용점수',        example: '735',      source: 'NICE API',  active: true },
-  { name: 'kcb_score',   naver: '{kcb_score}',    kakao: '#{kcb_score}',   desc: 'KCB 신용점수 (현재)',  example: '820',      source: 'KCB API',   active: true },
-  { name: 'kcb_diff',    naver: '{kcb_diff}',     kakao: '#{kcb_diff}',    desc: 'KCB 점수 변동량',      example: '10',       source: 'KCB API',   active: true },
-  { name: 'date',        naver: '{date}',          kakao: '#{date}',         desc: '기준일',               example: '2026.07.01', source: '발송일 기준', active: true },
-  { name: 'rate',        naver: '{rate}',          kakao: '#{rate}',         desc: '대출 평균 금리',        example: '4.5',      source: '대출리포트 API', active: true },
+  { name: 'user_name',   naver: '{user_name}',   kakao: '{user_name}',   desc: '사용자 이름',          example: '홍길동',    source: '회원 프로필', active: true },
+  { name: 'score',       naver: '{score}',        kakao: '{score}',       desc: 'NICE 신용점수 (현재)',  example: '750',      source: 'NICE API',  active: true },
+  { name: 'score_diff',  naver: '{score_diff}',   kakao: '{score_diff}',  desc: '점수 변동량 (절댓값)', example: '15',       source: 'NICE API',  active: true },
+  { name: 'direction',   naver: '{direction}',    kakao: '{direction}',   desc: '변동 방향',            example: '상승/하락', source: '계산값',     active: true },
+  { name: 'prev_score',  naver: '{prev_score}',   kakao: '{prev_score}',  desc: '이전 신용점수',        example: '735',      source: 'NICE API',  active: true },
+  { name: 'kcb_score',   naver: '{kcb_score}',    kakao: '{kcb_score}',   desc: 'KCB 신용점수 (현재)',  example: '820',      source: 'KCB API',   active: true },
+  { name: 'kcb_diff',    naver: '{kcb_diff}',     kakao: '{kcb_diff}',    desc: 'KCB 점수 변동량',      example: '10',       source: 'KCB API',   active: true },
+  { name: 'date',        naver: '{date}',          kakao: '{date}',         desc: '기준일',               example: '2026.07.01', source: '발송일 기준', active: true },
+  { name: 'rate',        naver: '{rate}',          kakao: '{rate}',         desc: '대출 평균 금리',        example: '4.5',      source: '대출리포트 API', active: true },
 ];
 
 function renderVariables() {
   document.getElementById('variables-tbody').innerHTML = variables.map((v, i) => `
     <tr>
       <td><code class="tag">${v.name}</code></td>
-      <td><code class="tag">${v.naver}</code></td>
-      <td><code class="tag">${v.kakao}</code></td>
+      <td><code class="tag">${v.fmt}</code></td>
       <td>${v.desc}</td>
       <td style="color:#888">${v.example}</td>
       <td style="color:#888;font-size:11px">${v.source}</td>
@@ -1462,8 +1459,7 @@ function addVariable() {
   }
   variables.push({
     name,
-    naver: `{${name}}`,
-    kakao: `#{${name}}`,
+    fmt: `{${name}}`,
     desc,
     example: document.getElementById('add-var-example').value.trim() || '-',
     source: document.getElementById('add-var-source').value.trim() || '-',
