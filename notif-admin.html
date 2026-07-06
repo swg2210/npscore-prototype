@@ -559,7 +559,6 @@
               <div class="form-control-wrap">
                 <input class="form-control" id="edit-kakao-test-phone"
                        placeholder="01012345678 (최대 3개, 쉼표로 구분)">
-                <div class="form-hint">비즈톡에 사전 등록된 번호에만 발송 가능합니다. ※ 테스트 발송도 과금됩니다.</div>
               </div>
             </div>
             <div style="margin-top: 10px; display:flex; align-items:center; gap:12px;">
@@ -1302,6 +1301,9 @@ function doTestSend() {
     document.getElementById('test-send-result').textContent = '연락처를 입력해주세요.';
     return;
   }
+  const nums = phone.split(',').map(s => s.trim()).filter(Boolean).join('\n');
+  const ok = confirm(`다음 번호로 테스트 발송하시겠습니까?\n\n${nums}\n\n⚠️ 테스트 발송은 실제 과금됩니다.`);
+  if (!ok) return;
   document.getElementById('test-send-result').style.color = '#888';
   document.getElementById('test-send-result').textContent = '발송 중...';
   setTimeout(() => {
