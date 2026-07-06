@@ -1302,7 +1302,7 @@ function doTestSend() {
     return;
   }
   const nums = phone.split(',').map(s => s.trim()).filter(Boolean).join('\n');
-  const ok = confirm(`다음 번호로 테스트 발송하시겠습니까?\n\n${nums}\n\n⚠️ 테스트 발송은 실제 과금됩니다.`);
+  const ok = confirm(`다음 번호로 테스트 발송하시겠습니까?\n\n${nums}\n\n연락처가 맞는지 한 번 더 확인해주세요.`);
   if (!ok) return;
   document.getElementById('test-send-result').style.color = '#888';
   document.getElementById('test-send-result').textContent = '발송 중...';
