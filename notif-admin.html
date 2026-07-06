@@ -717,7 +717,7 @@
               <div class="form-control-wrap">
                 <div class="badge-types-wrap">
                   <label><input type="checkbox" id="badge-naver" checked> NAVER (네이버 앱)</label>
-                  <label><input type="checkbox" id="badge-payapp" checked> PAYAPP (네이버페이 앱)</label>
+                  <label style="color:#bbb"><input type="checkbox" id="badge-payapp" disabled> PAYAPP (네이버페이 앱) — 필요 시 활성화 요청</label>
                 </div>
               </div>
             </div>
@@ -1236,7 +1236,7 @@ function editNaver(i) {
 
   // 뱃지 기본값 (기본 둘 다 체크)
   document.getElementById('badge-naver').checked = true;
-  document.getElementById('badge-payapp').checked = true;
+  document.getElementById('badge-payapp').checked = false;
 
   renderNaverHistory(c.code);
   switchTab('naver-edit', 'edit');
