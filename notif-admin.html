@@ -1304,15 +1304,30 @@ function editNaver(i) {
 }
 
 /* ─── 이력 렌더 ─── */
+const FIELD_LABEL = {
+  tmpltCode:    '템플릿 코드',
+  messageType:  '메시지 타입',
+  message:      '알림톡 본문',
+  title:        '강조 제목',
+  buttons:      '버튼',
+  mobile_text:  '모바일 본문',
+  push_text:    '푸시 본문',
+  push_title:   '푸시 제목',
+  link_url:     '링크 URL',
+  kakao_message:'알림톡 본문',
+  tmplt_code:   '템플릿 코드',
+};
+function fieldLabel(f) { return FIELD_LABEL[f] || f; }
+
 function renderKakaoHistory(code) {
   const rows = (historyData.kakao[code] || []);
   document.getElementById('kakao-history-body').innerHTML = rows.length === 0
     ? '<tr><td colspan="6" style="text-align:center; color:#aaa; padding:20px;">변경 이력이 없습니다.</td></tr>'
     : rows.map(r => `
         <tr>
-          <td>${r.dt}</td><td>${r.by}</td><td><code class="tag">${r.field}</code></td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999; cursor:pointer;" onclick="showHistoryDetail('${r.field}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.before)}</td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" onclick="showHistoryDetail('${r.field}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.after)}</td>
+          <td>${r.dt}</td><td>${r.by}</td><td><code class="tag">${fieldLabel(r.field)}</code></td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999; cursor:pointer;" onclick="showHistoryDetail('${fieldLabel(r.field)}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.before)}</td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" onclick="showHistoryDetail('${fieldLabel(r.field)}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.after)}</td>
           <td><a class="link-action" onclick="showToast('이 버전으로 복원되었습니다.')">복원</a></td>
         </tr>
       `).join('');
@@ -1324,9 +1339,9 @@ function renderNaverHistory(code) {
     ? '<tr><td colspan="6" style="text-align:center; color:#aaa; padding:20px;">변경 이력이 없습니다.</td></tr>'
     : rows.map(r => `
         <tr>
-          <td>${r.dt}</td><td>${r.by}</td><td><code class="tag">${r.field}</code></td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999; cursor:pointer;" onclick="showHistoryDetail('${r.field}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.before)}</td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" onclick="showHistoryDetail('${r.field}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.after)}</td>
+          <td>${r.dt}</td><td>${r.by}</td><td><code class="tag">${fieldLabel(r.field)}</code></td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999; cursor:pointer;" onclick="showHistoryDetail('${fieldLabel(r.field)}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.before)}</td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" onclick="showHistoryDetail('${fieldLabel(r.field)}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.after)}</td>
           <td><a class="link-action" onclick="showToast('이 버전으로 복원되었습니다.')">복원</a></td>
         </tr>
       `).join('');
