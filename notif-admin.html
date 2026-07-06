@@ -800,8 +800,6 @@
               <th style="width:160px">설명</th>
               <th style="width:100px">예시값</th>
               <th>데이터 소스</th>
-              <th style="width:60px">상태</th>
-              <th style="width:50px">관리</th>
             </tr>
           </thead>
           <tbody id="variables-tbody"></tbody>
@@ -1450,10 +1448,6 @@ function renderVariables() {
       <td>${v.desc}</td>
       <td style="color:#888">${v.example}</td>
       <td style="color:#888;font-size:11px">${v.source}</td>
-      <td style="text-align:center">${v.active
-        ? '<span style="color:#00a000;font-size:11px">●&nbsp;활성</span>'
-        : '<span style="color:#bbb;font-size:11px">●&nbsp;비활성</span>'}</td>
-      <td style="text-align:center"><a class="link-action" style="color:#c00" onclick="deleteVariable(${i})">삭제</a></td>
     </tr>
   `).join('');
 }
