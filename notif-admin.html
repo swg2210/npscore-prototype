@@ -513,6 +513,16 @@
             </div>
 
             <div class="form-row">
+              <div class="form-label">메시지 타입 (messageType)<span class="required">*</span></div>
+              <div class="form-control-wrap">
+                <select class="form-control" id="edit-kakao-msg-type" style="max-width:280px;">
+                  <option value="AT">AT — 기본 알림톡 (default)</option>
+                  <option value="AI">AI — 이미지 알림톡</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
               <div class="form-label">메시지 (message)<span class="required">*</span></div>
               <div class="form-control-wrap">
                 <textarea class="form-control" id="edit-kakao-message" rows="6"
@@ -1025,6 +1035,7 @@ const categories = [
     code: 'CREDIT_INFO_CHANGE',
     name: CATEGORY_NAME_MAP['CREDIT_INFO_CHANGE'],
     kakaoTmplt: 'NPS_CREDIT_INFO_CHG',
+    kakaoMsgType: 'AT',
     kakaoMsg: '[네이버페이]\n{user_name}님의 신용정보가 변동되었습니다.\n변동 내용을 확인해보세요.',
     kakaoTitle: '신용정보 변동 알림',
     kakaoButtons: [
@@ -1040,6 +1051,7 @@ const categories = [
     code: 'CREDIT_INFO_INQUIRY',
     name: CATEGORY_NAME_MAP['CREDIT_INFO_INQUIRY'],
     kakaoTmplt: 'NPS_CREDIT_INQ',
+    kakaoMsgType: 'AT',
     kakaoMsg: '[네이버페이]\n{user_name}님의 신용점수 조회가 요청되었습니다.\n조회 내역을 확인해보세요.',
     kakaoTitle: '',
     kakaoButtons: [
@@ -1055,6 +1067,7 @@ const categories = [
     code: 'CREDIT_INFO_LOANCOMPARE',
     name: CATEGORY_NAME_MAP['CREDIT_INFO_LOANCOMPARE'],
     kakaoTmplt: 'NPS_LOAN_COMP',
+    kakaoMsgType: 'AT',
     kakaoMsg: '[네이버페이]\n대출 비교 서비스 이용으로 신용점수 조회가 발생했습니다.',
     kakaoTitle: '',
     kakaoButtons: [],
@@ -1068,6 +1081,7 @@ const categories = [
     code: 'CREDIT_INFO_CARDCOMPARE',
     name: CATEGORY_NAME_MAP['CREDIT_INFO_CARDCOMPARE'],
     kakaoTmplt: 'NPS_CARD_COMP',
+    kakaoMsgType: 'AT',
     kakaoMsg: '[네이버페이]\n카드 비교 서비스 이용으로 신용점수 조회가 발생했습니다.',
     kakaoTitle: '',
     kakaoButtons: [],
@@ -1081,6 +1095,7 @@ const categories = [
     code: 'CREDIT_SCORE_NEW',
     name: CATEGORY_NAME_MAP['CREDIT_SCORE_NEW'],
     kakaoTmplt: 'NPS_SCORE_NICE',
+    kakaoMsgType: 'AT',
     kakaoMsg: '[네이버페이]\n{user_name}님의 NICE 신용점수가 변동되었습니다.\n변동 전: {prev_score}점 → 현재: {score}점 ({score_diff}점 {direction})',
     kakaoTitle: 'NICE 신용점수 변동',
     kakaoButtons: [
@@ -1096,6 +1111,7 @@ const categories = [
     code: 'CREDIT_SCORE_KCB',
     name: CATEGORY_NAME_MAP['CREDIT_SCORE_KCB'],
     kakaoTmplt: 'NPS_SCORE_KCB',
+    kakaoMsgType: 'AT',
     kakaoMsg: '[네이버페이]\n{user_name}님의 KCB 신용점수가 변동되었습니다.\n변동 전: {prev_score}점 → 현재: {score}점 ({score_diff}점 {direction})',
     kakaoTitle: 'KCB 신용점수 변동',
     kakaoButtons: [
@@ -1111,6 +1127,7 @@ const categories = [
     code: 'CREDIT_LOANREPORT_RATE',
     name: CATEGORY_NAME_MAP['CREDIT_LOANREPORT_RATE'],
     kakaoTmplt: 'NPS_LOAN_REPORT',
+    kakaoMsgType: 'AT',
     kakaoMsg: '[네이버페이]\n{user_name}님의 대출리포트가 업데이트되었습니다.\n현재 평균 금리: {rate}%',
     kakaoTitle: '',
     kakaoButtons: [],
@@ -1220,6 +1237,7 @@ function editKakao(i) {
   document.getElementById('edit-kakao-category-name').value = c.name;
   document.getElementById('edit-kakao-category-code').value = c.code;
   document.getElementById('edit-kakao-tmplt-code').value = c.kakaoTmplt;
+  document.getElementById('edit-kakao-msg-type').value = c.kakaoMsgType || 'AT';
   document.getElementById('edit-kakao-message').value = c.kakaoMsg;
   document.getElementById('edit-kakao-title').value = c.kakaoTitle;
   // 버튼 동적 렌더
@@ -1358,6 +1376,7 @@ function doTestSend() {
 function saveKakao() {
   const c = categories[currentEditIndex];
   c.kakaoTmplt = document.getElementById('edit-kakao-tmplt-code').value;
+  c.kakaoMsgType = document.getElementById('edit-kakao-msg-type').value;
   c.kakaoMsg = document.getElementById('edit-kakao-message').value;
   c.kakaoTitle = document.getElementById('edit-kakao-title').value;
   c.kakaoButtons = readKakaoBtns();
@@ -1483,6 +1502,7 @@ function addKakaoCategory() {
   categories.push({
     code, name,
     kakaoTmplt: tmplt,
+    kakaoMsgType: 'AT',
     kakaoMsg: msg,
     kakaoTitle: document.getElementById('add-kakao-title').value.trim(),
     kakaoButtons: [],
