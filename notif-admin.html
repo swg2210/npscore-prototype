@@ -1428,6 +1428,7 @@ function saveKakao() {
   c.kakaoButtons = newBtns;
   c.updatedBy = 'wg-seo';
   c.updatedAt = nowDt().slice(0, 10).replace(/\./g, '.');
+  saveToStorage();
   renderKakaoList();
   showView('kakao-list');
   showToast('저장되었습니다.');
@@ -1451,6 +1452,7 @@ function saveNaver() {
   c.naverLink      = newLink;
   c.updatedBy = 'wg-seo';
   c.updatedAt = nowDt().slice(0, 10).replace(/\./g, '.');
+  saveToStorage();
   renderNaverList();
   showView('naver-list');
   showToast('저장되었습니다.');
@@ -1642,7 +1644,31 @@ function addVariable() {
   showToast('변수가 추가되었습니다.');
 }
 
+/* ─── localStorage 영속화 ─── */
+const STORAGE_KEY_HISTORY   = 'notifAdmin_historyData';
+const STORAGE_KEY_CATEGORIES = 'notifAdmin_categories';
+
+function saveToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY_HISTORY,    JSON.stringify(historyData));
+    localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
+  } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const h = localStorage.getItem(STORAGE_KEY_HISTORY);
+    const c = localStorage.getItem(STORAGE_KEY_CATEGORIES);
+    if (h) Object.assign(historyData, JSON.parse(h));
+    if (c) {
+      const saved = JSON.parse(c);
+      saved.forEach((s, i) => { if (categories[i]) Object.assign(categories[i], s); });
+    }
+  } catch(e) {}
+}
+
 /* ─── 초기화 ─── */
+loadFromStorage();
 renderKakaoList();
 renderNaverList();
 renderVariables();
