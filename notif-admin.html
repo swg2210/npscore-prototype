@@ -1234,11 +1234,9 @@ function editNaver(i) {
   document.getElementById('edit-naver-link').value = c.naverLink;
   document.getElementById('edit-naver-enable-push').checked = true;
 
-  // 뱃지 기본값 (카테고리별)
-  document.getElementById('badge-score-up').checked = c.code === 'CREDIT_SCORE_NEW' || c.code === 'CREDIT_SCORE_KCB';
-  document.getElementById('badge-score-down').checked = c.code === 'CREDIT_SCORE_NEW' || c.code === 'CREDIT_SCORE_KCB';
-  document.getElementById('badge-info').checked = c.code === 'CREDIT_INFO_CHANGE';
-  document.getElementById('badge-loan').checked = c.code === 'CREDIT_LOANREPORT_RATE';
+  // 뱃지 기본값 (기본 둘 다 체크)
+  document.getElementById('badge-naver').checked = true;
+  document.getElementById('badge-payapp').checked = true;
 
   renderNaverHistory(c.code);
   switchTab('naver-edit', 'edit');
