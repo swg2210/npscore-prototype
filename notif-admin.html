@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -541,38 +541,15 @@
                   <th style="width:80px">타입</th>
                   <th>모바일 URL (url_mobile)</th>
                   <th>PC URL (url_pc)</th>
+                  <th style="width:40px"></th>
                 </tr>
               </thead>
-              <tbody id="kakao-btn-tbody">
-                <tr>
-                  <td class="row-no">1</td>
-                  <td><input type="text" id="btn1-name" placeholder="예: 신용점수 확인하기"></td>
-                  <td>
-                    <select id="btn1-type">
-                      <option value="">선택</option>
-                      <option value="WL">WL (웹링크)</option>
-                      <option value="AL">AL (앱링크)</option>
-                    </select>
-                  </td>
-                  <td><input type="text" id="btn1-url-m" placeholder="https://..."></td>
-                  <td><input type="text" id="btn1-url-p" placeholder="https://..."></td>
-                </tr>
-                <tr>
-                  <td class="row-no">2</td>
-                  <td><input type="text" id="btn2-name" placeholder="예: 자세히 보기"></td>
-                  <td>
-                    <select id="btn2-type">
-                      <option value="">선택</option>
-                      <option value="WL">WL (웹링크)</option>
-                      <option value="AL">AL (앱링크)</option>
-                    </select>
-                  </td>
-                  <td><input type="text" id="btn2-url-m" placeholder="https://..."></td>
-                  <td><input type="text" id="btn2-url-p" placeholder="https://..."></td>
-                </tr>
-              </tbody>
+              <tbody id="kakao-btn-tbody"></tbody>
             </table>
-          </div>
+            <div style="margin-top:8px; display:flex; align-items:center; gap:12px;">
+              <button class="btn-outline" onclick="addKakaoBtn()" id="kakao-btn-add-btn">+ 버튼 추가</button>
+              <span style="font-size:11px; color:#999;">최대 5개</span>
+            </div>
 
           <div class="form-section">
             <div class="form-section-title">테스트 발송</div>
@@ -1036,6 +1013,9 @@ const categories = [
     kakaoTmplt: 'NPS_CREDIT_INFO_CHG',
     kakaoMsg: '[네이버페이]\n{user_name}님의 신용정보가 변동되었습니다.\n변동 내용을 확인해보세요.',
     kakaoTitle: '신용정보 변동 알림',
+    kakaoButtons: [
+      { name: '신용점수 확인하기', type: 'WL', urlMobile: 'https://pay.naver.com/mycredit', urlPc: 'https://pay.naver.com/mycredit' }
+    ],
     naverMobile: '{user_name}님의 신용정보가 변동되었습니다.',
     naverPush: '신용정보 변동 알림이 도착했습니다.',
     naverPushTitle: '네이버페이 신용점수',
@@ -1048,6 +1028,9 @@ const categories = [
     kakaoTmplt: 'NPS_CREDIT_INQ',
     kakaoMsg: '[네이버페이]\n{user_name}님의 신용점수 조회가 요청되었습니다.\n조회 내역을 확인해보세요.',
     kakaoTitle: '',
+    kakaoButtons: [
+      { name: '조회 내역 확인', type: 'WL', urlMobile: 'https://pay.naver.com/mycredit', urlPc: 'https://pay.naver.com/mycredit' }
+    ],
     naverMobile: '{user_name}님의 신용점수 조회 내역이 있습니다.',
     naverPush: '신용점수 조회 알림이 도착했습니다.',
     naverPushTitle: '네이버페이 신용점수',
@@ -1060,6 +1043,7 @@ const categories = [
     kakaoTmplt: 'NPS_LOAN_COMP',
     kakaoMsg: '[네이버페이]\n대출 비교 서비스 이용으로 신용점수 조회가 발생했습니다.',
     kakaoTitle: '',
+    kakaoButtons: [],
     naverMobile: '대출비교 서비스 신용점수 조회 내역이 있습니다.',
     naverPush: '대출비교 신용조회 알림이 도착했습니다.',
     naverPushTitle: '네이버페이 신용점수',
@@ -1072,6 +1056,7 @@ const categories = [
     kakaoTmplt: 'NPS_CARD_COMP',
     kakaoMsg: '[네이버페이]\n카드 비교 서비스 이용으로 신용점수 조회가 발생했습니다.',
     kakaoTitle: '',
+    kakaoButtons: [],
     naverMobile: '카드비교 서비스 신용점수 조회 내역이 있습니다.',
     naverPush: '카드비교 신용조회 알림이 도착했습니다.',
     naverPushTitle: '네이버페이 신용점수',
@@ -1084,6 +1069,9 @@ const categories = [
     kakaoTmplt: 'NPS_SCORE_NICE',
     kakaoMsg: '[네이버페이]\n{user_name}님의 NICE 신용점수가 변동되었습니다.\n변동 전: {prev_score}점 → 현재: {score}점 ({score_diff}점 {direction})',
     kakaoTitle: 'NICE 신용점수 변동',
+    kakaoButtons: [
+      { name: '신용점수 확인하기', type: 'WL', urlMobile: 'https://pay.naver.com/mycredit', urlPc: 'https://pay.naver.com/mycredit' }
+    ],
     naverMobile: '{user_name}님의 NICE 신용점수가 {score_diff}점 {direction}했습니다.\n현재: {score}점',
     naverPush: 'NICE 신용점수 변동: {score}점 ({score_diff}점 {direction})',
     naverPushTitle: '네이버페이 신용점수',
@@ -1096,6 +1084,9 @@ const categories = [
     kakaoTmplt: 'NPS_SCORE_KCB',
     kakaoMsg: '[네이버페이]\n{user_name}님의 KCB 신용점수가 변동되었습니다.\n변동 전: {prev_score}점 → 현재: {score}점 ({score_diff}점 {direction})',
     kakaoTitle: 'KCB 신용점수 변동',
+    kakaoButtons: [
+      { name: '신용점수 확인하기', type: 'WL', urlMobile: 'https://pay.naver.com/mycredit', urlPc: 'https://pay.naver.com/mycredit' }
+    ],
     naverMobile: '{user_name}님의 KCB 신용점수가 {score_diff}점 {direction}했습니다.\n현재: {score}점',
     naverPush: 'KCB 신용점수 변동: {score}점 ({score_diff}점 {direction})',
     naverPushTitle: '네이버페이 신용점수',
@@ -1108,6 +1099,7 @@ const categories = [
     kakaoTmplt: 'NPS_LOAN_REPORT',
     kakaoMsg: '[네이버페이]\n{user_name}님의 대출리포트가 업데이트되었습니다.\n현재 평균 금리: {rate}%',
     kakaoTitle: '',
+    kakaoButtons: [],
     naverMobile: '{user_name}님의 대출리포트가 업데이트되었습니다. 평균 금리: {rate}%',
     naverPush: '대출리포트 업데이트 알림이 도착했습니다.',
     naverPushTitle: '네이버페이 신용점수',
@@ -1162,6 +1154,51 @@ function renderNaverList() {
 }
 
 /* ─── 편집 진입 ─── */
+/* ─── 카카오 버튼 동적 관리 ─── */
+let currentKakaoBtns = [];
+
+function renderKakaoBtnRows() {
+  document.getElementById('kakao-btn-tbody').innerHTML = currentKakaoBtns.map((b, i) => `
+    <tr>
+      <td class="row-no">${i + 1}</td>
+      <td><input type="text" class="btn-name" value="${b.name}" placeholder="예: 신용점수 확인하기"></td>
+      <td>
+        <select class="btn-type">
+          <option value="">선택</option>
+          <option value="WL" ${b.type === 'WL' ? 'selected' : ''}>WL (웹링크)</option>
+          <option value="AL" ${b.type === 'AL' ? 'selected' : ''}>AL (앱링크)</option>
+        </select>
+      </td>
+      <td><input type="text" class="btn-url-m" value="${b.urlMobile}" placeholder="https://..."></td>
+      <td><input type="text" class="btn-url-p" value="${b.urlPc}" placeholder="https://..."></td>
+      <td><a class="link-action" style="color:#c00;font-size:12px;" onclick="removeKakaoBtn(${i})">삭제</a></td>
+    </tr>
+  `).join('');
+  const addBtn = document.getElementById('kakao-btn-add-btn');
+  if (addBtn) addBtn.disabled = currentKakaoBtns.length >= 5;
+}
+
+function addKakaoBtn() {
+  if (currentKakaoBtns.length >= 5) return;
+  currentKakaoBtns.push({ name: '', type: '', urlMobile: '', urlPc: '' });
+  renderKakaoBtnRows();
+}
+
+function removeKakaoBtn(idx) {
+  currentKakaoBtns.splice(idx, 1);
+  renderKakaoBtnRows();
+}
+
+function readKakaoBtns() {
+  const rows = document.querySelectorAll('#kakao-btn-tbody tr');
+  return Array.from(rows).map(tr => ({
+    name: tr.querySelector('.btn-name').value.trim(),
+    type: tr.querySelector('.btn-type').value,
+    urlMobile: tr.querySelector('.btn-url-m').value.trim(),
+    urlPc: tr.querySelector('.btn-url-p').value.trim(),
+  })).filter(b => b.name);
+}
+
 function editKakao(i) {
   currentEditIndex = i;
   const c = categories[i];
@@ -1170,15 +1207,9 @@ function editKakao(i) {
   document.getElementById('edit-kakao-tmplt-code').value = c.kakaoTmplt;
   document.getElementById('edit-kakao-message').value = c.kakaoMsg;
   document.getElementById('edit-kakao-title').value = c.kakaoTitle;
-  // 버튼 초기화 (예시)
-  document.getElementById('btn1-name').value = '신용점수 확인하기';
-  document.getElementById('btn1-type').value = 'WL';
-  document.getElementById('btn1-url-m').value = 'https://pay.naver.com/mycredit';
-  document.getElementById('btn1-url-p').value = 'https://pay.naver.com/mycredit';
-  document.getElementById('btn2-name').value = '';
-  document.getElementById('btn2-type').value = '';
-  document.getElementById('btn2-url-m').value = '';
-  document.getElementById('btn2-url-p').value = '';
+  // 버튼 동적 렌더
+  currentKakaoBtns = (c.kakaoButtons || []).map(b => ({ ...b }));
+  renderKakaoBtnRows();
 
   tmpltCodeChanged = false;
   testSendDone = false;
@@ -1287,6 +1318,7 @@ function saveKakao() {
   c.kakaoTmplt = document.getElementById('edit-kakao-tmplt-code').value;
   c.kakaoMsg = document.getElementById('edit-kakao-message').value;
   c.kakaoTitle = document.getElementById('edit-kakao-title').value;
+  c.kakaoButtons = readKakaoBtns();
   c.updatedBy = 'wg-seo';
   c.updatedAt = '2026.07.03';
   renderKakaoList();
@@ -1415,6 +1447,7 @@ function addKakaoCategory() {
     kakaoTmplt: tmplt,
     kakaoMsg: msg,
     kakaoTitle: document.getElementById('add-kakao-title').value.trim(),
+    kakaoButtons: [],
     naverMobile: '', naverPush: '', naverPushTitle: '네이버페이 신용점수',
     naverLink: 'https://pay.naver.com/mycredit',
     updatedBy: 'wg-seo', updatedAt: today
