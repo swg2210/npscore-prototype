@@ -1012,6 +1012,26 @@
 <!-- 토스트 알림 -->
 <div class="toast" id="toast"></div>
 
+<!-- 변경 이력 상세 모달 -->
+<div id="history-detail-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;" onclick="closeHistoryModal(event)">
+  <div style="background:#fff; border-radius:12px; padding:28px 32px; max-width:640px; width:90%; max-height:80vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,0.18);" onclick="event.stopPropagation()">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <strong id="history-modal-title" style="font-size:14px; color:#333;"></strong>
+      <button onclick="closeHistoryModal()" style="background:none; border:none; font-size:18px; cursor:pointer; color:#999; padding:0 4px;">×</button>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div>
+        <div style="font-size:11px; color:#999; margin-bottom:6px; font-weight:600;">&#x25B6; 변경 전</div>
+        <pre id="history-modal-before" style="background:#f7f7f7; border:1px solid #e5e5e5; border-radius:6px; padding:12px; font-size:12px; white-space:pre-wrap; word-break:break-all; color:#888; margin:0; min-height:60px;"></pre>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#1a73e8; margin-bottom:6px; font-weight:600;">&#x25B6; 변경 후</div>
+        <pre id="history-modal-after" style="background:#f0f7ff; border:1px solid #c8e0ff; border-radius:6px; padding:12px; font-size:12px; white-space:pre-wrap; word-break:break-all; color:#222; margin:0; min-height:60px;"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ========================================================
      VIEW: 변수 카탈로그 — (DOM 외부에 숨겨진 뷰, .layout 밖)
 ======================================================== -->
@@ -1291,8 +1311,8 @@ function renderKakaoHistory(code) {
     : rows.map(r => `
         <tr>
           <td>${r.dt}</td><td>${r.by}</td><td><code class="tag">${r.field}</code></td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999">${r.before}</td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${r.after}</td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999; cursor:pointer;" onclick="showHistoryDetail('${r.field}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.before)}</td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" onclick="showHistoryDetail('${r.field}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.after)}</td>
           <td><a class="link-action" onclick="showToast('이 버전으로 복원되었습니다.')">복원</a></td>
         </tr>
       `).join('');
@@ -1305,8 +1325,8 @@ function renderNaverHistory(code) {
     : rows.map(r => `
         <tr>
           <td>${r.dt}</td><td>${r.by}</td><td><code class="tag">${r.field}</code></td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999">${r.before}</td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${r.after}</td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#999; cursor:pointer;" onclick="showHistoryDetail('${r.field}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.before)}</td>
+          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" onclick="showHistoryDetail('${r.field}', this.dataset.before, this.dataset.after)" data-before="${encodeHtml(r.before)}" data-after="${encodeHtml(r.after)}">${encodeHtml(r.after)}</td>
           <td><a class="link-action" onclick="showToast('이 버전으로 복원되었습니다.')">복원</a></td>
         </tr>
       `).join('');
@@ -1479,6 +1499,30 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function encodeHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showHistoryDetail(field, before, after) {
+  document.getElementById('history-modal-title').textContent = `[${field}] 변경 내용`;
+  document.getElementById('history-modal-before').textContent = decodeHtml(before);
+  document.getElementById('history-modal-after').textContent = decodeHtml(after);
+  const modal = document.getElementById('history-detail-modal');
+  modal.style.display = 'flex';
+}
+
+function decodeHtml(str) {
+  const el = document.createElement('textarea');
+  el.innerHTML = str || '';
+  return el.value;
+}
+
+function closeHistoryModal(e) {
+  if (!e || e.target === document.getElementById('history-detail-modal')) {
+    document.getElementById('history-detail-modal').style.display = 'none';
+  }
 }
 
 /* ─── 초기화 ─── */
