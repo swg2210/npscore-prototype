@@ -732,9 +732,27 @@
             </div>
           </div>
 
+          <div class="form-section">
+            <div class="form-section-title">테스트 발송</div>
+            <div class="form-row">
+              <div class="form-label">연락체 (휴대폰)</div>
+              <div class="form-control-wrap">
+                <input class="form-control" id="edit-naver-test-phone"
+                       placeholder="01012345678 (최대 3개, 쉼표로 구분)">
+              </div>
+            </div>
+            <div style="margin-top: 10px; display:flex; align-items:center; gap:12px;">
+              <button class="btn-test" onclick="doTestSendNaver()">테스트 발송</button>
+              <span id="naver-test-send-result" style="font-size:11px; color:#888;"></span>
+            </div>
+          </div>
+
           <div class="form-actions">
-            <button class="btn-green filled" onclick="saveNaver()">저장</button>
+            <button class="btn-green filled" id="naver-save-btn" onclick="saveNaver()">저장</button>
             <button class="btn-outline" onclick="showView('naver-list')">취소</button>
+            <span class="test-required-msg" id="naver-test-required-msg">
+              ※ 테스트 발송 성공 후 저장 가능합니다.
+            </span>
           </div>
         </div>
 
@@ -1124,6 +1142,7 @@ const historyData = {
 let currentEditIndex = null;
 let tmpltCodeChanged = false;
 let testSendDone = false;
+let testSendDoneNaver = false;
 
 /* ─── 렌더링 ─── */
 function renderKakaoList() {
@@ -1238,6 +1257,11 @@ function editNaver(i) {
   document.getElementById('badge-naver').checked = true;
   document.getElementById('badge-payapp').checked = false;
 
+  testSendDoneNaver = false;
+  document.getElementById('naver-test-send-result').textContent = '';
+  document.getElementById('naver-save-btn').disabled = true;
+  document.getElementById('naver-test-required-msg').classList.add('visible');
+
   renderNaverHistory(c.code);
   switchTab('naver-edit', 'edit');
   showView('naver-edit');
@@ -1290,6 +1314,27 @@ function onTmpltCodeChange() {
 }
 
 /* ─── 테스트 발송 ─── */
+function doTestSendNaver() {
+  const phone = document.getElementById('edit-naver-test-phone').value.trim();
+  if (!phone) {
+    document.getElementById('naver-test-send-result').style.color = '#e00';
+    document.getElementById('naver-test-send-result').textContent = '연락체를 입력해주세요.';
+    return;
+  }
+  const nums = phone.split(',').map(s => s.trim()).filter(Boolean).join('\n');
+  const ok = confirm(`다음 번호로 테스트 발송하시겠습니까?\n\n${nums}\n\n연락체가 맞는지 한 번 더 확인해주세요.`);
+  if (!ok) return;
+  document.getElementById('naver-test-send-result').style.color = '#888';
+  document.getElementById('naver-test-send-result').textContent = '발송 중...';
+  setTimeout(() => {
+    testSendDoneNaver = true;
+    document.getElementById('naver-test-send-result').style.color = '#00a000';
+    document.getElementById('naver-test-send-result').textContent = '✓ 테스트 발송 성공 — 저장 버튼이 활성화되었습니다.';
+    document.getElementById('naver-save-btn').disabled = false;
+    document.getElementById('naver-test-required-msg').classList.remove('visible');
+  }, 1200);
+}
+
 function doTestSend() {
   const phone = document.getElementById('edit-kakao-test-phone').value.trim();
   if (!phone) {
