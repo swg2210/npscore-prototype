@@ -1373,15 +1373,41 @@ function doTestSend() {
 }
 
 /* ─── 저장 ─── */
+function nowDt() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function pushHistory(channel, code, field, before, after) {
+  if (before === after) return;
+  if (!historyData[channel][code]) historyData[channel][code] = [];
+  historyData[channel][code].unshift({ dt: nowDt(), by: 'wg-seo', field, before, after });
+}
+
 function saveKakao() {
   const c = categories[currentEditIndex];
-  c.kakaoTmplt = document.getElementById('edit-kakao-tmplt-code').value;
-  c.kakaoMsgType = document.getElementById('edit-kakao-msg-type').value;
-  c.kakaoMsg = document.getElementById('edit-kakao-message').value;
-  c.kakaoTitle = document.getElementById('edit-kakao-title').value;
-  c.kakaoButtons = readKakaoBtns();
+  const newTmplt = document.getElementById('edit-kakao-tmplt-code').value;
+  const newMsgType = document.getElementById('edit-kakao-msg-type').value;
+  const newMsg = document.getElementById('edit-kakao-message').value;
+  const newTitle = document.getElementById('edit-kakao-title').value;
+  const newBtns = readKakaoBtns();
+
+  pushHistory('kakao', c.code, 'tmpltCode',    c.kakaoTmplt,    newTmplt);
+  pushHistory('kakao', c.code, 'messageType',  c.kakaoMsgType || 'AT', newMsgType);
+  pushHistory('kakao', c.code, 'message',      c.kakaoMsg,      newMsg);
+  pushHistory('kakao', c.code, 'title',        c.kakaoTitle,    newTitle);
+  const oldBtnsStr = JSON.stringify(c.kakaoButtons || []);
+  const newBtnsStr = JSON.stringify(newBtns);
+  pushHistory('kakao', c.code, 'buttons', oldBtnsStr, newBtnsStr);
+
+  c.kakaoTmplt   = newTmplt;
+  c.kakaoMsgType = newMsgType;
+  c.kakaoMsg     = newMsg;
+  c.kakaoTitle   = newTitle;
+  c.kakaoButtons = newBtns;
   c.updatedBy = 'wg-seo';
-  c.updatedAt = '2026.07.03';
+  c.updatedAt = nowDt().slice(0, 10).replace(/\./g, '.');
   renderKakaoList();
   showView('kakao-list');
   showToast('저장되었습니다.');
@@ -1389,12 +1415,22 @@ function saveKakao() {
 
 function saveNaver() {
   const c = categories[currentEditIndex];
-  c.naverMobile = document.getElementById('edit-naver-mobile').value;
-  c.naverPush = document.getElementById('edit-naver-push').value;
-  c.naverPushTitle = document.getElementById('edit-naver-push-title').value;
-  c.naverLink = document.getElementById('edit-naver-link').value;
+  const newMobile     = document.getElementById('edit-naver-mobile').value;
+  const newPush       = document.getElementById('edit-naver-push').value;
+  const newPushTitle  = document.getElementById('edit-naver-push-title').value;
+  const newLink       = document.getElementById('edit-naver-link').value;
+
+  pushHistory('naver', c.code, 'mobile_text',  c.naverMobile,    newMobile);
+  pushHistory('naver', c.code, 'push_text',    c.naverPush,      newPush);
+  pushHistory('naver', c.code, 'push_title',   c.naverPushTitle, newPushTitle);
+  pushHistory('naver', c.code, 'link_url',     c.naverLink,      newLink);
+
+  c.naverMobile    = newMobile;
+  c.naverPush      = newPush;
+  c.naverPushTitle = newPushTitle;
+  c.naverLink      = newLink;
   c.updatedBy = 'wg-seo';
-  c.updatedAt = '2026.07.03';
+  c.updatedAt = nowDt().slice(0, 10).replace(/\./g, '.');
   renderNaverList();
   showView('naver-list');
   showToast('저장되었습니다.');
