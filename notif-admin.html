@@ -745,10 +745,10 @@
           <div class="form-section">
             <div class="form-section-title">테스트 발송</div>
             <div class="form-row">
-              <div class="form-label">연락체 (휴대폰)</div>
+              <div class="form-label">네이버 아이디</div>
               <div class="form-control-wrap">
                 <input class="form-control" id="edit-naver-test-phone"
-                       placeholder="01012345678 (최대 3개, 쉼표로 구분)">
+                       placeholder="naverId (최대 3개, 쉼표로 구분)">
               </div>
             </div>
             <div style="margin-top: 10px; display:flex; align-items:center; gap:12px;">
@@ -1351,14 +1351,14 @@ function onTmpltCodeChange() {
 
 /* ─── 테스트 발송 ─── */
 function doTestSendNaver() {
-  const phone = document.getElementById('edit-naver-test-phone').value.trim();
-  if (!phone) {
+  const id = document.getElementById('edit-naver-test-phone').value.trim();
+  if (!id) {
     document.getElementById('naver-test-send-result').style.color = '#e00';
-    document.getElementById('naver-test-send-result').textContent = '연락체를 입력해주세요.';
+    document.getElementById('naver-test-send-result').textContent = '네이버 아이디를 입력해주세요.';
     return;
   }
-  const nums = phone.split(',').map(s => s.trim()).filter(Boolean).join('\n');
-  const ok = confirm(`다음 번호로 테스트 발송하시겠습니까?\n\n${nums}\n\n연락체가 맞는지 한 번 더 확인해주세요.`);
+  const ids = id.split(',').map(s => s.trim()).filter(Boolean).join('\n');
+  const ok = confirm(`다음 아이디로 테스트 발송하시겠습니까?\n\n${ids}\n\n아이디가 맞는지 한 번 더 확인해주세요.`);
   if (!ok) return;
   document.getElementById('naver-test-send-result').style.color = '#888';
   document.getElementById('naver-test-send-result').textContent = '발송 중...';
