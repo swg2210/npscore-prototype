@@ -571,7 +571,7 @@
             <button class="btn-green filled" id="kakao-save-btn" onclick="saveKakao()">저장</button>
             <button class="btn-outline" onclick="showView('kakao-list')">취소</button>
             <span class="test-required-msg" id="test-required-msg">
-              ※ 템플릿 코드 변경 시 테스트 발송 성공 후 저장 가능합니다.
+              ※ 테스트 발송 성공 후 저장 가능합니다.
             </span>
           </div>
         </div>
@@ -1212,8 +1212,8 @@ function editKakao(i) {
   tmpltCodeChanged = false;
   testSendDone = false;
   document.getElementById('test-send-result').textContent = '';
-  document.getElementById('kakao-save-btn').disabled = false;
-  document.getElementById('test-required-msg').classList.remove('visible');
+  document.getElementById('kakao-save-btn').disabled = true;
+  document.getElementById('test-required-msg').classList.add('visible');
 
   // 이력 렌더
   renderKakaoHistory(c.code);
